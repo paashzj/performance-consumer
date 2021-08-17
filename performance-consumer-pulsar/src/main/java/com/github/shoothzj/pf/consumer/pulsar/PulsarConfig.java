@@ -54,4 +54,7 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_ASYNC:false}")
     public boolean consumeAsync;
 
+    @Value("${PULSAR_CONSUME_RATE_LIMITER:-1}")
+    public int rateLimiter;
+
 }
