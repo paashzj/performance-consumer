@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,6 +67,7 @@ public class PulsarBootService {
             return;
         }
         List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
+        List<Semaphore> semaphores = new ArrayList<>();
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             consumerListList.add(new ArrayList<>());
         }
@@ -74,10 +76,11 @@ public class PulsarBootService {
             final Consumer<byte[]> consumer = createConsumerBuilder(topic).subscriptionName(UUID.randomUUID().toString()).subscribe();
             int index = aux % commonConfig.pullThreads;
             consumerListList.get(index).add(consumer);
+            semaphores.add(new Semaphore(5));
             aux++;
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
-            new PulsarPullThread(i, consumerListList.get(i), pulsarConfig).start();
+            new PulsarPullThread(i, semaphores, consumerListList.get(i), pulsarConfig).start();
         }
     }
 

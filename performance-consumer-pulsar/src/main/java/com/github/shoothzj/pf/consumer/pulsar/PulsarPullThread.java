@@ -8,6 +8,7 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.Messages;
 
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -22,8 +23,11 @@ public class PulsarPullThread extends AbstractPullThread {
 
     private final RateLimiter rateLimiter;
 
-    public PulsarPullThread(int i, List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
+    private final List<Semaphore> semaphores;
+
+    public PulsarPullThread(int i, List<Semaphore> semaphores, List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
         super(i);
+        this.semaphores = semaphores;
         this.consumers = consumers;
         this.pulsarConfig = pulsarConfig;
         this.rateLimiter = pulsarConfig.rateLimiter == -1 ? null : RateLimiter.create(pulsarConfig.rateLimiter);
@@ -34,10 +38,18 @@ public class PulsarPullThread extends AbstractPullThread {
         if (pulsarConfig.rateLimiter != -1 && !rateLimiter.tryAcquire(5, TimeUnit.MILLISECONDS)) {
             return;
         }
-        for (Consumer<byte[]> consumer : consumers) {
+        for (int i = 0; i < consumers.size(); i++) {
+            Consumer<byte[]> consumer = consumers.get(i);
+            Semaphore semaphore = semaphores.get(i);
             if (pulsarConfig.consumeBatch) {
                 if (pulsarConfig.consumeAsync) {
-                    consumer.batchReceiveAsync().thenAccept(consumer::acknowledgeAsync);
+                    if (semaphore.tryAcquire()  || pulsarConfig.receiveLimiter == -1) {
+                        consumer.batchReceiveAsync().thenAccept(messages -> {
+                                    consumer.acknowledgeAsync(messages);
+                                    semaphore.release();
+                                }
+                        );
+                    }
                 } else {
                     final Messages<byte[]> messages = consumer.batchReceive();
                     consumer.acknowledge(messages);

@@ -57,4 +57,7 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_RATE_LIMITER:-1}")
     public int rateLimiter;
 
+    @Value("${PULSAR_CONSUME_RECEIVE_LIMITER:-1}")
+    public int receiveLimiter;
+
 }
