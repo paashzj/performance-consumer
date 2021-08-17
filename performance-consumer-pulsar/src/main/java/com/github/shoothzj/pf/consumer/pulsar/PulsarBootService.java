@@ -89,7 +89,7 @@ public class PulsarBootService {
             return builder;
         }
         final BatchReceivePolicy batchReceivePolicy = BatchReceivePolicy.builder()
-                .timeout(pulsarConfig.consumeBatchTimeoutMs, TimeUnit.SECONDS)
+                .timeout(pulsarConfig.consumeBatchTimeoutMs, TimeUnit.MILLISECONDS)
                 .maxNumMessages(pulsarConfig.consumeBatchMaxMessages).build();
         return builder.batchReceivePolicy(batchReceivePolicy);
     }

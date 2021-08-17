@@ -45,7 +45,7 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_BATCH:false}")
     public boolean consumeBatch;
 
-    @Value("${PULSAR_CONSUME_BATCH_TIMEOUT_MS:1000}")
+    @Value("${PULSAR_CONSUME_BATCH_TIMEOUT_MS:50}")
     public int consumeBatchTimeoutMs;
 
     @Value("${PULSAR_CONSUME_BATCH_MAX_MESSAGES:1}")
