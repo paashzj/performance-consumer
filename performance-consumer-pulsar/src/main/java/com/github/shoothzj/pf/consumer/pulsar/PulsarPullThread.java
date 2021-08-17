@@ -28,8 +28,12 @@ public class PulsarPullThread extends AbstractPullThread {
     protected void pull() throws Exception {
         for (Consumer<byte[]> consumer : consumers) {
             if (pulsarConfig.consumeBatch) {
-                final Messages<byte[]> messages = consumer.batchReceive();
-                consumer.acknowledge(messages);
+                if (pulsarConfig.consumeAsync) {
+                    consumer.batchReceiveAsync().thenAccept(consumer::acknowledgeAsync);
+                } else {
+                    final Messages<byte[]> messages = consumer.batchReceive();
+                    consumer.acknowledge(messages);
+                }
             } else {
                 final Message<byte[]> message = consumer.receive();
                 consumer.acknowledge(message);

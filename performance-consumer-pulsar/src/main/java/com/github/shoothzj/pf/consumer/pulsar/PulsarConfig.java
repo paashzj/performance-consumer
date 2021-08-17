@@ -51,4 +51,7 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_BATCH_MAX_MESSAGES:1}")
     public int consumeBatchMaxMessages;
 
+    @Value("${PULSAR_CONSUME_ASYNC:false}")
+    public boolean consumeAsync;
+
 }
