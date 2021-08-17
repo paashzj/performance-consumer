@@ -38,22 +38,48 @@ public class PulsarPullThread extends AbstractPullThread {
         if (pulsarConfig.rateLimiter != -1 && !rateLimiter.tryAcquire(5, TimeUnit.MILLISECONDS)) {
             return;
         }
+        if (pulsarConfig.consumeAsync) {
+            asyncReceive();
+        } else {
+            syncReceive();
+        }
+    }
+
+    private void asyncReceive() throws Exception {
         for (int i = 0; i < consumers.size(); i++) {
             Consumer<byte[]> consumer = consumers.get(i);
             Semaphore semaphore = semaphores.get(i);
-            if (pulsarConfig.consumeBatch) {
-                if (pulsarConfig.consumeAsync) {
-                    if (semaphore.tryAcquire()  || pulsarConfig.receiveLimiter == -1) {
-                        consumer.batchReceiveAsync().thenAccept(messages -> {
-                                    consumer.acknowledgeAsync(messages);
-                                    semaphore.release();
-                                }
-                        );
+            asyncReceiveConsumer(consumer, semaphore);
+        }
+    }
+
+    private void asyncReceiveConsumer(Consumer<byte[]> consumer, Semaphore semaphore) {
+        if (semaphore != null && !semaphore.tryAcquire()) {
+            return;
+        }
+        if (pulsarConfig.consumeBatch) {
+            consumer.batchReceiveAsync().thenAccept(messages -> {
+                        consumer.acknowledgeAsync(messages);
+                        if (semaphore != null) {
+                            semaphore.release();
+                        }
                     }
-                } else {
-                    final Messages<byte[]> messages = consumer.batchReceive();
-                    consumer.acknowledge(messages);
+            );
+        } else {
+            consumer.receiveAsync().thenAccept(message -> {
+                consumer.acknowledgeAsync(message);
+                if (semaphore != null) {
+                    semaphore.release();
                 }
+            });
+        }
+    }
+
+    private void syncReceive() throws Exception {
+        for (Consumer<byte[]> consumer : consumers) {
+            if (pulsarConfig.consumeBatch) {
+                final Messages<byte[]> messages = consumer.batchReceive();
+                consumer.acknowledge(messages);
             } else {
                 final Message<byte[]> message = consumer.receive();
                 consumer.acknowledge(message);

@@ -36,6 +36,9 @@ public class PulsarConfig {
     @Value("${PULSAR_AUTO_UPDATE_PARTITION:false}")
     public boolean autoUpdatePartition;
 
+    @Value("${PULSAR_AUTO_UPDATE_PARTITION_SECONDS:60}")
+    public int autoUpdatePartitionSeconds;
+
     @Value("${PULSAR_OPERATION_TIMEOUT_SECONDS:15}")
     public int operationTimeoutSeconds;
 
@@ -48,7 +51,7 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_BATCH_TIMEOUT_MS:50}")
     public int consumeBatchTimeoutMs;
 
-    @Value("${PULSAR_CONSUME_BATCH_MAX_MESSAGES:1}")
+    @Value("${PULSAR_CONSUME_BATCH_MAX_MESSAGES:500}")
     public int consumeBatchMaxMessages;
 
     @Value("${PULSAR_CONSUME_ASYNC:false}")

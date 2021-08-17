@@ -76,7 +76,11 @@ public class PulsarBootService {
             final Consumer<byte[]> consumer = createConsumerBuilder(topic).subscriptionName(UUID.randomUUID().toString()).subscribe();
             int index = aux % commonConfig.pullThreads;
             consumerListList.get(index).add(consumer);
-            semaphores.add(new Semaphore(5));
+            if (pulsarConfig.receiveLimiter == -1) {
+                semaphores.add(null);
+            } else {
+                semaphores.add(new Semaphore(pulsarConfig.receiveLimiter));
+            }
             aux++;
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
@@ -88,6 +92,10 @@ public class PulsarBootService {
         ConsumerBuilder<byte[]> builder = pulsarClient.newConsumer().topic(topic)
                 .subscriptionName(UUID.randomUUID().toString());
         builder = builder.subscriptionType(pulsarConfig.subscriptionType);
+        if (pulsarConfig.autoUpdatePartition) {
+            builder.autoUpdatePartitions(true);
+            builder.autoUpdatePartitionsInterval(pulsarConfig.autoUpdatePartitionSeconds, TimeUnit.SECONDS);
+        }
         if (!pulsarConfig.consumeBatch) {
             return builder;
         }
