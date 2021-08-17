@@ -21,13 +21,13 @@ public class PulsarConfig {
     @Value("${PULSAR_IO_THREADS:4}")
     public int ioThreads;
 
-    @Value("${PULSAR_TENANT:0}")
+    @Value("${PULSAR_TENANT:public}")
     public String tenant;
 
-    @Value("${PULSAR_NAMESPACE:0}")
+    @Value("${PULSAR_NAMESPACE:default}")
     public String namespace;
 
-    @Value("${PULSAR_TOPIC:0}")
+    @Value("${PULSAR_TOPIC:topic}")
     public String topic;
 
     @Value("${PULSAR_TOPIC_SUFFIX_NUM:0}")
