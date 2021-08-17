@@ -14,7 +14,7 @@ public class CommonConfig {
     @Value("${CONSUME_MODE:PULL}")
     public ConsumeMode consumeMode;
 
-    @Value("{PULL_THREADS:1}")
+    @Value("${PULL_THREADS:1}")
     public int pullThreads;
 
 }
