@@ -18,16 +18,16 @@ public class ActionConfig {
     @Value("${ACTION_BLOCK_DELAY_MS:0}")
     public int actionBlockDelayMs;
 
-    @Value("${INFLUX_ADDR}")
+    @Value("${INFLUX_ADDR:null}")
     public String influxAddr;
 
-    @Value("${INFLUX_TOKEN}")
+    @Value("${INFLUX_TOKEN:null}")
     public String influxToken;
 
-    @Value("${INFLUX_ORG}")
+    @Value("${INFLUX_ORG:null}")
     public String influxOrg;
 
-    @Value("${INFLUX_BUCKET}")
+    @Value("${INFLUX_BUCKET:null}")
     public String influxBucket;
 
 }
