@@ -9,6 +9,8 @@
         <module>performance-consumer-pulsar</module>
         <module>performance-consumer-kafka</module>
         <module>performance-consumer-common</module>
+        <module>action-influxdb</module>
+        <module>action-base</module>
     </modules>
 
     <parent>

@@ -1,4 +1,4 @@
-package com.github.shoothzj.pf.consumer.common;
+package com.github.shoothzj.pf.consumer.common.module;
 
 /**
  * @author hezhangjian

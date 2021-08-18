@@ -1,7 +1,8 @@
 package com.github.shoothzj.pf.consumer.pulsar;
 
-import com.github.shoothzj.pf.consumer.common.CommonConfig;
-import com.github.shoothzj.pf.consumer.common.ConsumeMode;
+import com.github.shoothzj.pf.consumer.common.service.ActionService;
+import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
+import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.BatchReceivePolicy;
 import org.apache.pulsar.client.api.Consumer;
@@ -31,9 +32,12 @@ public class PulsarBootService {
 
     private final CommonConfig commonConfig;
 
-    public PulsarBootService(@Autowired PulsarConfig pulsarConfig, @Autowired CommonConfig commonConfig) {
+    private final ActionService actionService;
+
+    public PulsarBootService(@Autowired PulsarConfig pulsarConfig, @Autowired CommonConfig commonConfig, @Autowired ActionService actionService) {
         this.pulsarConfig = pulsarConfig;
         this.commonConfig = commonConfig;
+        this.actionService = actionService;
     }
 
     public void boot() throws Exception {
@@ -84,7 +88,7 @@ public class PulsarBootService {
             aux++;
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
-            new PulsarPullThread(i, semaphores, consumerListList.get(i), pulsarConfig).start();
+            new PulsarPullThread(i, actionService, semaphores, consumerListList.get(i), pulsarConfig).start();
         }
     }
 
