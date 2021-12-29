@@ -34,7 +34,8 @@ public class PulsarBootService {
 
     private final ActionService actionService;
 
-    public PulsarBootService(@Autowired PulsarConfig pulsarConfig, @Autowired CommonConfig commonConfig, @Autowired ActionService actionService) {
+    public PulsarBootService(@Autowired PulsarConfig pulsarConfig, @Autowired CommonConfig commonConfig,
+                             @Autowired ActionService actionService) {
         this.pulsarConfig = pulsarConfig;
         this.commonConfig = commonConfig;
         this.actionService = actionService;
@@ -64,9 +65,13 @@ public class PulsarBootService {
     }
 
     public void createConsumers(List<String> topics) throws PulsarClientException {
+        String subscriptionName = UUID.randomUUID().toString();
         if (commonConfig.consumeMode.equals(ConsumeMode.LISTEN)) {
             for (String topic : topics) {
-                createConsumerBuilder(topic).messageListener((MessageListener<byte[]>) (consumer, msg) -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(UUID.randomUUID().toString()).subscribe();
+                createConsumerBuilder(topic)
+                        .messageListener((MessageListener<byte[]>) (consumer, msg)
+                                -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
+                        .subscribe();
             }
             return;
         }
@@ -77,7 +82,8 @@ public class PulsarBootService {
         }
         int aux = 0;
         for (String topic : topics) {
-            final Consumer<byte[]> consumer = createConsumerBuilder(topic).subscriptionName(UUID.randomUUID().toString()).subscribe();
+            final Consumer<byte[]> consumer = createConsumerBuilder(topic)
+                    .subscriptionName(subscriptionName).subscribe();
             int index = aux % commonConfig.pullThreads;
             consumerListList.get(index).add(consumer);
             if (pulsarConfig.receiveLimiter == -1) {

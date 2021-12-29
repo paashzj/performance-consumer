@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActionConfig {
 
-    @Value("${ACTION_TYPE}")
+    @Value("${ACTION_TYPE:LOG}")
     public ActionType actionType;
 
     @Value("${ACTION_BLOCK_DELAY_MS:0}")

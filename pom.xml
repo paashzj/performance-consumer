@@ -11,6 +11,8 @@
         <module>performance-consumer-common</module>
         <module>action-influxdb</module>
         <module>action-base</module>
+        <module>performance-consumer-mqtt</module>
+        <module>action-log</module>
     </modules>
 
     <parent>

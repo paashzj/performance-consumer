@@ -1,6 +1,7 @@
 package com.github.shoothzj.pf.consumer.kafka;
 
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
+import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,13 @@ public class KafkaBootService {
 
     private final CommonConfig commonConfig;
 
-    public KafkaBootService(@Autowired KafkaConfig kafkaConfig, @Autowired CommonConfig commonConfig) {
+    private final ActionService actionService;
+
+    public KafkaBootService(@Autowired KafkaConfig kafkaConfig, @Autowired CommonConfig commonConfig,
+                            @Autowired ActionService actionService) {
         this.kafkaConfig = kafkaConfig;
         this.commonConfig = commonConfig;
+        this.actionService = actionService;
     }
 
     public void boot() {
@@ -48,7 +53,7 @@ public class KafkaBootService {
             aux++;
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
-            new KafkaPullThread(i, strListList.get(i), kafkaConfig).start();
+            new KafkaPullThread(i, actionService, strListList.get(i), kafkaConfig).start();
         }
     }
 

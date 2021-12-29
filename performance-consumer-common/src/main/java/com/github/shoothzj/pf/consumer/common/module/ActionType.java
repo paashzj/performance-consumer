@@ -6,5 +6,6 @@ package com.github.shoothzj.pf.consumer.common.module;
 public enum ActionType {
 
     INFLUX,
+    LOG,
 
 }

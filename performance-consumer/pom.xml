@@ -24,6 +24,11 @@
         </dependency>
         <dependency>
             <groupId>com.github.shoothzj</groupId>
+            <artifactId>performance-consumer-mqtt</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.shoothzj</groupId>
             <artifactId>performance-consumer-pulsar</artifactId>
             <version>0.0.1</version>
         </dependency>

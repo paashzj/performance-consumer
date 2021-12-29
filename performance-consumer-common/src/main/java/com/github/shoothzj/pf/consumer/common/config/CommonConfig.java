@@ -1,6 +1,5 @@
 package com.github.shoothzj.pf.consumer.common.config;
 
-import com.github.shoothzj.pf.consumer.common.module.ActionType;
 import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
