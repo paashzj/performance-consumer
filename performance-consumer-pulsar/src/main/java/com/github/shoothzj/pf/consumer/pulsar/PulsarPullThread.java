@@ -21,8 +21,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class PulsarPullThread extends AbstractPullThread {
 
-    private final ActionService actionService;
-
     private final List<Consumer<byte[]>> consumers;
 
     private final PulsarConfig pulsarConfig;
@@ -31,9 +29,9 @@ public class PulsarPullThread extends AbstractPullThread {
 
     private final List<Semaphore> semaphores;
 
-    public PulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores, List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
-        super(i);
-        this.actionService = actionService;
+    public PulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
+                            List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
+        super(i, actionService);
         this.semaphores = semaphores;
         this.consumers = consumers;
         this.pulsarConfig = pulsarConfig;
@@ -109,11 +107,11 @@ public class PulsarPullThread extends AbstractPullThread {
         for (Message<byte[]> message : messages) {
             list.add(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
         }
-        actionService.handleBatchMsg(list);
+        this.actionService.handleBatchMsg(list);
     }
 
     private void handle(Message<byte[]> message) {
-        actionService.handleMsg(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
+        this.actionService.handleMsg(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 
 }

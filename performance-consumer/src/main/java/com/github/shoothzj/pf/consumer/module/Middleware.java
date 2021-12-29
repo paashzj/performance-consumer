@@ -6,6 +6,7 @@ package com.github.shoothzj.pf.consumer.module;
 public enum Middleware {
 
     KAFKA,
+    MQTT,
     PULSAR
 
 }

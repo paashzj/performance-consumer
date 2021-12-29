@@ -1,5 +1,6 @@
 package com.github.shoothzj.pf.consumer.common;
 
+import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -8,8 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractPullThread extends Thread {
 
-    public AbstractPullThread(int i) {
+    protected final ActionService actionService;
+
+    public AbstractPullThread(int i, ActionService actionService) {
         setName("pull- " + i);
+        this.actionService = actionService;
     }
 
     @Override
@@ -23,6 +27,6 @@ public abstract class AbstractPullThread extends Thread {
         }
     }
 
-    abstract protected void pull() throws Exception;
+    protected abstract void pull() throws Exception;
 
 }

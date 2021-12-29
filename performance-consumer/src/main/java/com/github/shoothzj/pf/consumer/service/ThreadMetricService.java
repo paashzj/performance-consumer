@@ -51,7 +51,8 @@ public class ThreadMetricService {
             final long nanoTime = System.nanoTime();
             ThreadMetricsAux oldMetrics = map.get(threadId);
             if (oldMetrics != null) {
-                double percent = (double) (threadNanoTime - oldMetrics.getUsedNanoTime()) / (double) (nanoTime - oldMetrics.getLastNanoTime());
+                double percent = (double) (threadNanoTime - oldMetrics.getUsedNanoTime())
+                        / (double) (nanoTime - oldMetrics.getLastNanoTime());
                 handleDynamicGauge("jvm.threads.cpu", "threadName", threadInfo.getThreadName(), percent);
             }
             map.put(threadId, new ThreadMetricsAux(threadNanoTime, nanoTime));

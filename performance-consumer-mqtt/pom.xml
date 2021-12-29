@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>performance-consumer-pulsar</artifactId>
+    <artifactId>performance-consumer-mqtt</artifactId>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -31,12 +31,8 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client-original</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.pulsar</groupId>
-            <artifactId>pulsar-client-admin-original</artifactId>
+            <groupId>org.eclipse.paho</groupId>
+            <artifactId>org.eclipse.paho.client.mqttv3</artifactId>
         </dependency>
     </dependencies>
 

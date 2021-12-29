@@ -1,6 +1,7 @@
 package com.github.shoothzj.pf.consumer.kafka;
 
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
+import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -9,7 +10,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -24,8 +24,8 @@ public class KafkaPullThread extends AbstractPullThread {
 
     private final KafkaConsumer<String, String> consumer;
 
-    public KafkaPullThread(int i, List<String> topics, KafkaConfig kafkaConfig) {
-        super(i);
+    public KafkaPullThread(int i, ActionService actionService, List<String> topics, KafkaConfig kafkaConfig) {
+        super(i, actionService);
         this.kafkaConfig = kafkaConfig;
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.addr);
