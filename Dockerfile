@@ -12,4 +12,4 @@ COPY --from=build /opt/sh/compile/performance-consumer/target/performance-consum
 
 COPY docker-build /opt/sh
 
-CMD ["/usr/local/bin/dumb-init", "bash", "-vx","/opt/sh/scripts/start.sh"]
+CMD ["/usr/bin/dumb-init", "bash", "-vx","/opt/sh/scripts/start.sh"]
