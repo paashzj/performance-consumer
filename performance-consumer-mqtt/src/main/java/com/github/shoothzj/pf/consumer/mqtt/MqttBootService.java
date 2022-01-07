@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,10 @@ public class MqttBootService implements MqttCallback {
         MqttClient mqttClient = new MqttClient(String.format("tcp://%s:%d", mqttConfig.host, mqttConfig.port),
                 mqttConfig.clientId);
         mqttClient.setCallback(this);
+        MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
+        mqttConnectOptions.setUserName(mqttConfig.username);
+        mqttConnectOptions.setPassword(mqttConfig.password.toCharArray());
+        mqttClient.connect(mqttConnectOptions);
         mqttClient.subscribe(mqttConfig.topic);
         mqttClient.setCallback(this);
     }

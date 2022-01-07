@@ -20,4 +20,10 @@ public class MqttConfig {
     @Value("${MQTT_TOPIC:topic}")
     public String topic;
 
+    @Value("${MQTT_USERNAME:username}")
+    public String username;
+
+    @Value("${MQTT_PASSWORD:password}")
+    public String password;
+
 }
