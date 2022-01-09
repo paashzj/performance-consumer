@@ -1,10 +1,5 @@
-cd "$(dirname "$0")"
+#!/bin/bash
 
-cd ..
-
-echo `pwd`
-
-mkdir /opt/sh/logs
-
-java -Xmx1G -Xms1G -XX:MaxDirectMemorySize=2G -jar /opt/sh/pf-consumer.jar >/opt/sh/logs/console.log 2>/opt/sh/logs/error.log
+DIR="$( cd "$( dirname "$0"  )" && pwd  )"
+bash -x $DIR/start-daemon.sh
 tail -f /dev/null
