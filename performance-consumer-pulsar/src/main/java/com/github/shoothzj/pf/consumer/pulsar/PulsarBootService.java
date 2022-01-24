@@ -90,6 +90,7 @@ public class PulsarBootService {
                 createConsumerBuilder(topic)
                         .messageListener((MessageListener<byte[]>) (consumer, msg)
                                 -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
+                        .receiverQueueSize(pulsarConfig.receiveQueueSize)
                         .subscribe();
             }
             return;
@@ -102,6 +103,7 @@ public class PulsarBootService {
         int aux = 0;
         for (String topic : topics) {
             final Consumer<byte[]> consumer = createConsumerBuilder(topic)
+                    .receiverQueueSize(pulsarConfig.receiveQueueSize)
                     .subscriptionName(subscriptionName).subscribe();
             int index = aux % commonConfig.pullThreads;
             consumerListList.get(index).add(consumer);
@@ -124,6 +126,10 @@ public class PulsarBootService {
         if (pulsarConfig.autoUpdatePartition) {
             builder.autoUpdatePartitions(true);
             builder.autoUpdatePartitionsInterval(pulsarConfig.autoUpdatePartitionSeconds, TimeUnit.SECONDS);
+        }
+        if (pulsarConfig.enableAckTimeout) {
+            builder.ackTimeout(pulsarConfig.ackTimeOut, TimeUnit.SECONDS);
+            builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTime, TimeUnit.SECONDS);
         }
         if (!pulsarConfig.consumeBatch) {
             return builder;

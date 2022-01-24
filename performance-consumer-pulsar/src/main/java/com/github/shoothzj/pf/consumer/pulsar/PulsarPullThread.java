@@ -90,6 +90,9 @@ public class PulsarPullThread extends AbstractPullThread {
                         }
                     }
             ).exceptionally(ex -> {
+                if (semaphore != null) {
+                    semaphore.release();
+                }
                 log.error("batch receive ", ex);
                 return null;
             });
@@ -101,6 +104,9 @@ public class PulsarPullThread extends AbstractPullThread {
                     semaphore.release();
                 }
             }).exceptionally(ex -> {
+                if (semaphore != null) {
+                    semaphore.release();
+                }
                 log.error("receive ex ", ex);
                 return null;
             });
