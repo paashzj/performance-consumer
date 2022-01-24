@@ -88,10 +88,10 @@ public class PulsarConfig {
     @Value("${ENABLE_ACK_TIMEOUT:false}")
     public boolean enableAckTimeout;
 
-    @Value("${ACK_TIMEOUT:30000}")
+    @Value("${ACK_TIMEOUT_MILLISECONDS:30000}")
     public int ackTimeoutMilliseconds;
 
-    @Value("${ACK_TIMEOUT_TICK_TIME:100}")
+    @Value("${ACK_TIMEOUT_TICK_TIME_MILLISECONDS:100}")
     public int ackTimeoutTickTimeMilliseconds;
 
 }
