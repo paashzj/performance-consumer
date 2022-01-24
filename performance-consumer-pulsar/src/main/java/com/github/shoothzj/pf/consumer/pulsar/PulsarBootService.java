@@ -128,8 +128,8 @@ public class PulsarBootService {
             builder.autoUpdatePartitionsInterval(pulsarConfig.autoUpdatePartitionSeconds, TimeUnit.SECONDS);
         }
         if (pulsarConfig.enableAckTimeout) {
-            builder.ackTimeout(pulsarConfig.ackTimeOut, TimeUnit.SECONDS);
-            builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTime, TimeUnit.SECONDS);
+            builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+            builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
         }
         if (!pulsarConfig.consumeBatch) {
             return builder;
