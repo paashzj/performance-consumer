@@ -64,6 +64,9 @@ public class PulsarConfig {
     @Value("${PULSAR_SUBSCRIPTION_TYPE:Exclusive}")
     public SubscriptionType subscriptionType;
 
+    @Value("{ENABLE_ACK_TIMEOUT:false}")
+    public boolean enableAckTimeout;
+
     @Value("${PULSAR_CONSUME_BATCH:false}")
     public boolean consumeBatch;
 
@@ -81,5 +84,14 @@ public class PulsarConfig {
 
     @Value("${PULSAR_CONSUME_RECEIVE_LIMITER:-1}")
     public int receiveLimiter;
+
+    @Value("{ACK_TIMEOUT:20}")
+    public int ackTimeOut;
+
+    @Value("ACK_TIMEOUT_TICK_TIME:5")
+    public int ackTimeoutTickTime;
+
+    @Value("{RECEIVE_QUEUE_SIZE:500}")
+    public int receiveQueueSize;
 
 }
