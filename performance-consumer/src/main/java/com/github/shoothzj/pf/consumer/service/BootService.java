@@ -51,6 +51,9 @@ public class BootService {
     @PostConstruct
     public void init() throws Exception {
         switch (pfConfig.middleware) {
+            case DUMMY:
+                log.info("dummy middleware");
+                break;
             case KAFKA:
                 kafkaBootService.boot();
                 break;
