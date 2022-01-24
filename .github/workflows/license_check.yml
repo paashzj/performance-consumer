@@ -17,18 +17,25 @@
 # under the License.
 #
 
-FROM ttbb/compile:jdk17-git-mvn AS build
-COPY . /opt/sh/compile
-WORKDIR /opt/sh/compile
-RUN mvn -B clean package
+name: "license check"
 
+on:
+  pull_request:
+    branches:
+      - main
 
-FROM ttbb/base:jdk17
+jobs:
+  license-check:
+    name: License Check
+    runs-on: ubuntu-latest
 
-LABEL maintainer="shoothzj@gmail.com"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-COPY --from=build /opt/sh/compile/performance-consumer/target/performance-consumer-0.0.1.jar /opt/sh/pf-consumer.jar
-
-COPY docker-build /opt/sh
-
-CMD ["/usr/bin/dumb-init", "bash", "-vx","/opt/sh/scripts/start.sh"]
+      - name: Check license header
+        uses: apache/skywalking-eyes@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          config: .licenserc.yaml
