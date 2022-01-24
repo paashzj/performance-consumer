@@ -24,6 +24,7 @@ package com.github.shoothzj.pf.consumer.module;
  */
 public enum Middleware {
 
+    DUMMY,
     KAFKA,
     MQTT,
     PULSAR
