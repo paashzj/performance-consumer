@@ -38,7 +38,7 @@
     <parent>
         <groupId>com.github.shoothzj</groupId>
         <artifactId>java-dependency</artifactId>
-        <version>3.1.21</version>
+        <version>3.1.22</version>
     </parent>
 
     <artifactId>performance-consumer-parent</artifactId>
@@ -57,7 +57,7 @@
         <dependency>
             <groupId>com.github.shoothzj</groupId>
             <artifactId>java-tool</artifactId>
-            <version>3.1.9</version>
+            <version>3.1.10</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

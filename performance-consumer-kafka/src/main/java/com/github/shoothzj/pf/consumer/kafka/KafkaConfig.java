@@ -39,6 +39,12 @@ public class KafkaConfig {
     @Value("${KAFKA_TOPIC_SUFFIX_NUM:0}")
     public int topicSuffixNum;
 
+    @Value("${KAFKA_GROUP_ID:0}")
+    public String groupId;
+
+    @Value("${KAFKA_AUTO_OFFSET_RESET_CONFIG:latest}")
+    public String autoOffsetResetConfig;
+
     @Value("${KAFKA_MAX_POLL_RECORDS:500}")
     public int maxPollRecords;
 
