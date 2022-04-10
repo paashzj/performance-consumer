@@ -26,6 +26,25 @@ echo `pwd`
 
 mkdir -p /opt/sh/logs
 
+if [ -n "${PULSAR_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
+  cd /opt/sh/lib
+
+  # delete original version jar of pulsar
+  rm -rf pulsar-client*
+  rm -rf pulsar-common*
+  rm -rf pulsar-package-core*
+  rm -rf pulsar-transaction-common*
+
+  # download specify version jar of pulsar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-api/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-api-"${PULSAR_JAR_VERSION}".jar -o pulsar-client-admin-api-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-original/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-original-"${PULSAR_JAR_VERSION}".jar -o pulsar-client-admin-original-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-api/"${PULSAR_JAR_VERSION}"/pulsar-client-api-"${PULSAR_JAR_VERSION}".jar -o pulsar-client-api-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-original/"${PULSAR_JAR_VERSION}"/pulsar-client-original-"${PULSAR_JAR_VERSION}".jar -o pulsar-client-original-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-common/"${PULSAR_JAR_VERSION}"/pulsar-common-"${PULSAR_JAR_VERSION}".jar -o pulsar-common-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-package-core/"${PULSAR_JAR_VERSION}"/pulsar-package-core-"${PULSAR_JAR_VERSION}".jar -o pulsar-package-core-"${PULSAR_JAR_VERSION}".jar
+  curl  "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-transaction-common/"${PULSAR_JAR_VERSION}"/pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar -o pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar
+fi
+
 # memory option
 if [ ! -n "$HEAP_MEM" ]; then
   HEAP_MEM="1G"

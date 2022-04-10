@@ -31,7 +31,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
-import java.util.UUID;
 
 /**
  * @author hezhangjian
