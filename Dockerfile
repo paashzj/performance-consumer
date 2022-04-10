@@ -28,6 +28,8 @@ FROM ttbb/base:jdk17
 LABEL maintainer="shoothzj@gmail.com"
 
 COPY --from=build /opt/sh/compile/performance-consumer/target/performance-consumer-0.0.1.jar /opt/sh/pf-consumer.jar
+COPY --from=build /opt/sh/compile/performance-consumer/target/lib/* /opt/sh/lib/
+COPY --from=build /opt/sh/compile/performance-consumer/target/conf/* /opt/sh/conf/
 
 COPY docker-build /opt/sh
 
