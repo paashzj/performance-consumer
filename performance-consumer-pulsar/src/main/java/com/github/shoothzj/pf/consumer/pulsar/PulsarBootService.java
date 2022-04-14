@@ -22,6 +22,7 @@ package com.github.shoothzj.pf.consumer.pulsar;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
 import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
+import com.github.shoothzj.pf.consumer.common.util.NameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.BatchReceivePolicy;
 import org.apache.pulsar.client.api.Consumer;
@@ -73,11 +74,27 @@ public class PulsarBootService {
         }
         // now we have pulsar client, we start pulsar consumer
         List<String> topics = new ArrayList<>();
-        if (pulsarConfig.topicSuffixNum == 0) {
-            topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic));
+        log.info("tenant prefix name [{}].", pulsarConfig.tenantPrefix);
+        if (!pulsarConfig.tenantPrefix.isBlank()) {
+            if (pulsarConfig.namespacePrefix.isBlank()) {
+                log.info("namespace prefix name is blank.");
+                return;
+            }
+            for (int i = 0; i < pulsarConfig.tenantSuffixNum; i++) {
+                String tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
+                for (int j = 0; j < pulsarConfig.namespaceSuffixNum; j++) {
+                    String namespaceName = NameUtil.name(pulsarConfig.tenantPrefix,
+                            j, pulsarConfig.namespaceSuffixNumOfDigits);
+                    createTopic(topics, tenantName, namespaceName);
+                }
+            }
         } else {
-            for (int i = 0; i < pulsarConfig.topicSuffixNum; i++) {
-                topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic + i));
+            if (pulsarConfig.topicSuffixNum == 0) {
+                topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic));
+            } else {
+                for (int i = 0; i < pulsarConfig.topicSuffixNum; i++) {
+                    topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic + i));
+                }
             }
         }
         createConsumers(topics);
@@ -142,6 +159,13 @@ public class PulsarBootService {
 
     private String topicFn(String tenant, String namespace, String topic) {
         return String.format("persistent://%s/%s/%s", tenant, namespace, topic);
+    }
+
+    private void createTopic(List<String> topics, String tenantName, String namespaceName) {
+        for (int k = 0; k <= pulsarConfig.topicSuffixNum; k++) {
+            String topicName = NameUtil.name(pulsarConfig.topic, k, pulsarConfig.topicSuffixNumOfDigits);
+            topics.add(topicFn(tenantName, namespaceName, topicName));
+        }
     }
 
 }
