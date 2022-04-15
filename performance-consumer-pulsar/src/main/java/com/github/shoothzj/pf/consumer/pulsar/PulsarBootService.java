@@ -173,7 +173,12 @@ public class PulsarBootService {
 
     private void createTopic(List<String> topics, String tenantName, String namespaceName) {
         for (int k = 0; k <= pulsarConfig.topicSuffixNum; k++) {
-            String topicName = NameUtil.name(pulsarConfig.topic, k, pulsarConfig.topicSuffixNumOfDigits);
+            String topicName = "";
+            if (pulsarConfig.topicSuffixNum == 0) {
+                tenantName = pulsarConfig.topic;
+            } else {
+                topicName = NameUtil.name(pulsarConfig.topic, k, pulsarConfig.topicSuffixNumOfDigits);
+            }
             topics.add(topicFn(tenantName, namespaceName, topicName));
         }
     }
