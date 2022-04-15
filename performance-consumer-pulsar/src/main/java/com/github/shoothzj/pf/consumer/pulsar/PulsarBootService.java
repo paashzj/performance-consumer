@@ -80,11 +80,21 @@ public class PulsarBootService {
                 log.info("namespace prefix name is blank.");
                 return;
             }
-            for (int i = 0; i < pulsarConfig.tenantSuffixNum; i++) {
-                String tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
-                for (int j = 0; j < pulsarConfig.namespaceSuffixNum; j++) {
-                    String namespaceName = NameUtil.name(pulsarConfig.tenantPrefix,
-                            j, pulsarConfig.namespaceSuffixNumOfDigits);
+            for (int i = 0; i <= pulsarConfig.tenantSuffixNum; i++) {
+                String tenantName;
+                if (pulsarConfig.tenantSuffixNum == 0) {
+                    tenantName = pulsarConfig.tenantPrefix;
+                } else {
+                    tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
+                }
+                for (int j = 0; j <= pulsarConfig.namespaceSuffixNum; j++) {
+                    String namespaceName;
+                    if (pulsarConfig.namespaceSuffixNum == 0) {
+                        namespaceName = pulsarConfig.namespacePrefix;
+                    } else {
+                        namespaceName = NameUtil.name(pulsarConfig.namespacePrefix,
+                                j, pulsarConfig.namespaceSuffixNumOfDigits);
+                    }
                     createTopic(topics, tenantName, namespaceName);
                 }
             }
