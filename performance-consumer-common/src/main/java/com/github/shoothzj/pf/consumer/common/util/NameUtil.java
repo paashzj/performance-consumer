@@ -22,8 +22,12 @@ package com.github.shoothzj.pf.consumer.common.util;
 public class NameUtil {
 
     public static String name(String prefixName, int suffixNum, int numOfDigits) {
-        long suffix = MathUtil.pow(10, numOfDigits) + suffixNum;
-        return String.format("%s_%s", prefixName, suffix);
+        if (numOfDigits == 0) {
+            return String.format("%s_%s", prefixName, suffixNum);
+        } else {
+            long suffix = MathUtil.pow(10, numOfDigits) + suffixNum;
+            return String.format("%s_%s", prefixName, suffix);
+        }
     }
 
 }
