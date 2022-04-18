@@ -24,6 +24,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import java.time.LocalDateTime;
+import java.util.Date;
+
 /**
  * @author hezhangjian
  */
@@ -33,6 +36,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class Main {
 
     public static void main(String[] args) {
+        Thread.setDefaultUncaughtExceptionHandler((thread, exception) -> {
+            System.err.printf("%s [%s] error Uncaught exception in thread %s: %s%n",
+                    LocalDateTime.now(), thread.getContextClassLoader(),
+                    thread.getName(), exception.getMessage());
+            exception.printStackTrace(System.err);
+        });
         SpringApplication.run(Main.class);
     }
 
