@@ -43,7 +43,7 @@ public class PulsarConfig {
     @Value("${PULSAR_TENANT_PREFIX:}")
     public String tenantPrefix;
 
-    @Value("${PULSAR_TENANT_SUFFIX_NUM:1}")
+    @Value("${PULSAR_TENANT_SUFFIX_NUM:0}")
     public int tenantSuffixNum;
 
     @Value("${PULSAR_TENANT_SUFFIX_NUM_OF_DIGITS:0}")
@@ -55,7 +55,7 @@ public class PulsarConfig {
     @Value("${PULSAR_NAMESPACE_PREFIX:}")
     public String namespacePrefix;
 
-    @Value("${PULSAR_NAMESPACE_SUFFIX_NUM:1}")
+    @Value("${PULSAR_NAMESPACE_SUFFIX_NUM:0}")
     public int namespaceSuffixNum;
 
     @Value("${PULSAR_NAMESPACE_SUFFIX_NUM_OF_DIGITS:0}")
