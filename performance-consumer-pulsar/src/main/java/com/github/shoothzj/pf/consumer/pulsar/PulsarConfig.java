@@ -103,13 +103,13 @@ public class PulsarConfig {
     @Value("${PULSAR_CONSUME_RECEIVE_LIMITER:-1}")
     public int receiveLimiter;
 
-    @Value("${ENABLE_ACK_TIMEOUT:false}")
+    @Value("${PULSAR_ENABLE_ACK_TIMEOUT:false}")
     public boolean enableAckTimeout;
 
-    @Value("${ACK_TIMEOUT_MILLISECONDS:30000}")
+    @Value("${PULSAR_ACK_TIMEOUT_MILLISECONDS:30000}")
     public int ackTimeoutMilliseconds;
 
-    @Value("${ACK_TIMEOUT_TICK_TIME_MILLISECONDS:100}")
+    @Value("${PULSAR_ACK_TIMEOUT_TICK_TIME_MILLISECONDS:100}")
     public int ackTimeoutTickTimeMilliseconds;
 
 }
