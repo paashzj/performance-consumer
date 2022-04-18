@@ -60,4 +60,4 @@ JVM_OPT="${JVM_OPT} -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=4 -XX:ConcGCThre
 # gc log option
 JVM_OPT="${JVM_OPT} -Xlog:gc*=info,gc+phases=debug:/opt/sh/logs/gc.log:time,uptime:filecount=10,filesize=100M"
 
-java $JAVA_OPT $JVM_OPT -classpath /opt/sh/lib/*:/opt/sh/pf-consumer.jar:/opt/sh/conf/* com.github.shoothzj.pf.consumer.Main >>/opt/sh/logs/stdout.log 2>>/opt/sh/logs/stderr.log
+java $JAVA_OPT $JVM_OPT -Dlog4j.configurationFile=conf/log4j2.yaml -classpath /opt/sh/lib/*:/opt/sh/pf-consumer.jar:/opt/sh/conf/* com.github.shoothzj.pf.consumer.Main >>/opt/sh/logs/stdout.log 2>>/opt/sh/logs/stderr.log
