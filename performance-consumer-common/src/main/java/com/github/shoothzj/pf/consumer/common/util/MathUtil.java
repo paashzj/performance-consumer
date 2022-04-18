@@ -19,11 +19,14 @@
 
 package com.github.shoothzj.pf.consumer.common.util;
 
-public class NameUtil {
+public class MathUtil {
 
-    public static String name(String prefixName, int suffixNum, int numOfDigits) {
-        long suffix = MathUtil.pow(10, numOfDigits) + suffixNum;
-        return String.format("%s_%s", prefixName, suffix);
+    public static long pow(int x, int n) {
+        long result = 1;
+        for (int i = 0; i < n; i++) {
+            result *= x;
+        }
+        return result;
     }
 
 }
