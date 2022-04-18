@@ -51,6 +51,7 @@ public class PulsarPullThread extends AbstractPullThread {
     public PulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
                             List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
         super(i, actionService);
+        log.info("entry pulsarPullThread [{}].", i);
         this.semaphores = semaphores;
         this.consumers = consumers;
         this.pulsarConfig = pulsarConfig;

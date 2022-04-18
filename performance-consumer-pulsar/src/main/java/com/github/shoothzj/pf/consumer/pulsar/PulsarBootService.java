@@ -112,6 +112,7 @@ public class PulsarBootService {
 
     public void createConsumers(List<String> topics) throws PulsarClientException {
         String subscriptionName = UUID.randomUUID().toString();
+        log.info("judge consume mode.");
         if (commonConfig.consumeMode.equals(ConsumeMode.LISTEN)) {
             for (String topic : topics) {
                 createConsumerBuilder(topic)
@@ -122,6 +123,7 @@ public class PulsarBootService {
             }
             return;
         }
+        log.info("judge consume mode end. ");
         List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
         List<Semaphore> semaphores = new ArrayList<>();
         for (int i = 0; i < commonConfig.pullThreads; i++) {
@@ -141,6 +143,7 @@ public class PulsarBootService {
             }
             aux++;
         }
+        log.info("begin execute pulsarPullThread.");
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             new PulsarPullThread(i, actionService, semaphores, consumerListList.get(i), pulsarConfig).start();
         }
