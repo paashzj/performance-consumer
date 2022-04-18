@@ -70,25 +70,32 @@ public class PulsarBootService {
             throw new IllegalArgumentException("build pulsar client exception, exit");
         }
         // now we have pulsar client, we start pulsar consumer
-        List<String> topics = getTopicList();
-        startConsumers(topics);
+        startConsumers(getTopicList());
     }
 
     public void startConsumers(List<String> topics) {
         String subscriptionName = UUID.randomUUID().toString();
         if (commonConfig.consumeMode.equals(ConsumeMode.LISTEN)) {
-            for (String topic : topics) {
-                try {
-                    createConsumerBuilder(topic)
-                            .messageListener((MessageListener<byte[]>) (consumer, msg)
-                                    -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
-                            .subscribe();
-                } catch (PulsarClientException e) {
-                    log.error("create consumer fail. topic [{}]", topic, e);
-                }
-            }
-            return;
+            startConsumersListen(topics, subscriptionName);
+        } else {
+            startConsumersPull(topics, subscriptionName);
         }
+    }
+
+    public void startConsumersListen(List<String> topics, String subscriptionName) {
+        for (String topic : topics) {
+            try {
+                createConsumerBuilder(topic)
+                        .messageListener((MessageListener<byte[]>) (consumer, msg)
+                                -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
+                        .subscribe();
+            } catch (PulsarClientException e) {
+                log.error("create consumer fail. topic [{}]", topic, e);
+            }
+        }
+    }
+
+    public void startConsumersPull(List<String> topics, String subscriptionName) {
         List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
         List<Semaphore> semaphores = new ArrayList<>();
         for (int i = 0; i < commonConfig.pullThreads; i++) {
@@ -151,10 +158,12 @@ public class PulsarBootService {
             if (pulsarConfig.tenantSuffixNum == 0) {
                 String tenantName = pulsarConfig.tenantPrefix;
                 topics = topics(tenantName, namespaces);
-            }
-            for (int i = 0; i < pulsarConfig.tenantSuffixNum; i++) {
-                String tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
-                topics.addAll(topics(tenantName, namespaces));
+            } else {
+                for (int i = 0; i < pulsarConfig.tenantSuffixNum; i++) {
+                    String tenantName = NameUtil.name(pulsarConfig.tenantPrefix,
+                            i, pulsarConfig.tenantSuffixNumOfDigits);
+                    topics.addAll(topics(tenantName, namespaces));
+                }
             }
         } else {
             if (pulsarConfig.topicSuffixNum == 0) {
@@ -174,8 +183,8 @@ public class PulsarBootService {
         if (pulsarConfig.namespaceSuffixNum == 0) {
             namespaceNames.add(pulsarConfig.namespacePrefix);
         }
-        for (int j = 0; j < pulsarConfig.namespaceSuffixNum; j++) {
-            String namespaceName = NameUtil.name(pulsarConfig.namespacePrefix, j
+        for (int i = 0; i < pulsarConfig.namespaceSuffixNum; i++) {
+            String namespaceName = NameUtil.name(pulsarConfig.namespacePrefix, i
                     , pulsarConfig.namespaceSuffixNumOfDigits);
             namespaceNames.add(namespaceName);
         }
@@ -188,11 +197,12 @@ public class PulsarBootService {
             for (String namespaceName : namespaceNames) {
                 topics.add(PulsarUtils.topicFn(tenantName, namespaceName, pulsarConfig.topic));
             }
-        }
-        for (int k = 0; k < pulsarConfig.topicSuffixNum; k++) {
-            String topicName = NameUtil.name(pulsarConfig.topic, k, pulsarConfig.topicSuffixNumOfDigits);
-            for (String namespaceName : namespaceNames) {
-                topics.add(PulsarUtils.topicFn(tenantName, namespaceName, topicName));
+        } else {
+            for (int i = 0; i < pulsarConfig.topicSuffixNum; i++) {
+                String topicName = NameUtil.name(pulsarConfig.topic, i, pulsarConfig.topicSuffixNumOfDigits);
+                for (String namespaceName : namespaceNames) {
+                    topics.add(PulsarUtils.topicFn(tenantName, namespaceName, topicName));
+                }
             }
         }
         return topics;
