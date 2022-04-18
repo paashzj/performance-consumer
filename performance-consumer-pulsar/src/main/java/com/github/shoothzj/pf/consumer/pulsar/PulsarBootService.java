@@ -39,9 +39,6 @@ import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @Service
 public class PulsarBootService {
@@ -73,51 +70,17 @@ public class PulsarBootService {
             throw new IllegalArgumentException("build pulsar client exception, exit");
         }
         // now we have pulsar client, we start pulsar consumer
-        List<String> topics = new ArrayList<>();
-        log.info("tenant prefix name [{}].", pulsarConfig.tenantPrefix);
-        if (!pulsarConfig.tenantPrefix.isBlank()) {
-            if (pulsarConfig.namespacePrefix.isBlank()) {
-                log.info("namespace prefix name is blank.");
-                return;
-            }
-            for (int i = 0; i <= pulsarConfig.tenantSuffixNum; i++) {
-                String tenantName;
-                if (pulsarConfig.tenantSuffixNum == 0) {
-                    tenantName = pulsarConfig.tenantPrefix;
-                } else {
-                    tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
-                }
-                for (int j = 0; j <= pulsarConfig.namespaceSuffixNum; j++) {
-                    String namespaceName;
-                    if (pulsarConfig.namespaceSuffixNum == 0) {
-                        namespaceName = pulsarConfig.namespacePrefix;
-                    } else {
-                        namespaceName = NameUtil.name(pulsarConfig.namespacePrefix,
-                                j, pulsarConfig.namespaceSuffixNumOfDigits);
-                    }
-                    createTopic(topics, tenantName, namespaceName);
-                }
-            }
-        } else {
-            if (pulsarConfig.topicSuffixNum == 0) {
-                topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic));
-            } else {
-                for (int i = 0; i < pulsarConfig.topicSuffixNum; i++) {
-                    topics.add(topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic + i));
-                }
-            }
-        }
-        createConsumers(topics);
+        List<String> topics = getTopicList();
+        startConsumers(topics);
     }
 
-    public void createConsumers(List<String> topics) throws PulsarClientException {
+    public void startConsumers(List<String> topics) throws PulsarClientException {
         String subscriptionName = UUID.randomUUID().toString();
         if (commonConfig.consumeMode.equals(ConsumeMode.LISTEN)) {
             for (String topic : topics) {
                 createConsumerBuilder(topic)
                         .messageListener((MessageListener<byte[]>) (consumer, msg)
                                 -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
-                        .receiverQueueSize(pulsarConfig.receiveQueueSize)
                         .subscribe();
             }
             return;
@@ -130,7 +93,6 @@ public class PulsarBootService {
         int aux = 0;
         for (String topic : topics) {
             final Consumer<byte[]> consumer = createConsumerBuilder(topic)
-                    .receiverQueueSize(pulsarConfig.receiveQueueSize)
                     .subscriptionName(subscriptionName).subscribe();
             int index = aux % commonConfig.pullThreads;
             consumerListList.get(index).add(consumer);
@@ -158,6 +120,7 @@ public class PulsarBootService {
             builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
         }
+        builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
         if (!pulsarConfig.consumeBatch) {
             return builder;
         }
@@ -167,8 +130,43 @@ public class PulsarBootService {
         return builder.batchReceivePolicy(batchReceivePolicy);
     }
 
-    private String topicFn(String tenant, String namespace, String topic) {
-        return String.format("persistent://%s/%s/%s", tenant, namespace, topic);
+    private List<String> getTopicList() {
+        List<String> topics = new ArrayList<>();
+        log.info("tenant prefix name [{}].", pulsarConfig.tenantPrefix);
+        if (!pulsarConfig.tenantPrefix.isBlank()) {
+            if (pulsarConfig.namespacePrefix.isBlank()) {
+                log.info("namespace prefix name is blank.");
+                return topics;
+            }
+            for (int i = 0; i <= pulsarConfig.tenantSuffixNum; i++) {
+                String tenantName;
+                if (pulsarConfig.tenantSuffixNum == 0) {
+                    tenantName = pulsarConfig.tenantPrefix;
+                } else {
+                    tenantName = NameUtil.name(pulsarConfig.tenantPrefix, i, pulsarConfig.tenantSuffixNumOfDigits);
+                }
+                for (int j = 0; j <= pulsarConfig.namespaceSuffixNum; j++) {
+                    String namespaceName;
+                    if (pulsarConfig.namespaceSuffixNum == 0) {
+                        namespaceName = pulsarConfig.namespacePrefix;
+                    } else {
+                        namespaceName = NameUtil.name(pulsarConfig.namespacePrefix,
+                                j, pulsarConfig.namespaceSuffixNumOfDigits);
+                    }
+                    createTopic(topics, tenantName, namespaceName);
+                }
+            }
+        } else {
+            if (pulsarConfig.topicSuffixNum == 0) {
+                topics.add(PulsarUtils.topicFn(pulsarConfig.tenant, pulsarConfig.namespace, pulsarConfig.topic));
+            } else {
+                for (int i = 0; i < pulsarConfig.topicSuffixNum; i++) {
+                    topics.add(PulsarUtils.topicFn(pulsarConfig.tenant, pulsarConfig.namespace,
+                            pulsarConfig.topic + i));
+                }
+            }
+        }
+        return topics;
     }
 
     private void createTopic(List<String> topics, String tenantName, String namespaceName) {
@@ -179,7 +177,7 @@ public class PulsarBootService {
             } else {
                 topicName = NameUtil.name(pulsarConfig.topic, k, pulsarConfig.topicSuffixNumOfDigits);
             }
-            topics.add(topicFn(tenantName, namespaceName, topicName));
+            topics.add(PulsarUtils.topicFn(tenantName, namespaceName, topicName));
         }
     }
 

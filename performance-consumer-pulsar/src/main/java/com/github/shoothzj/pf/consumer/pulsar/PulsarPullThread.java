@@ -34,9 +34,6 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 public class PulsarPullThread extends AbstractPullThread {
 

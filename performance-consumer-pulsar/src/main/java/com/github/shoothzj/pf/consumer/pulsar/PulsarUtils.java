@@ -17,13 +17,12 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.common.util;
+package com.github.shoothzj.pf.consumer.pulsar;
 
-public class NameUtil {
+public class PulsarUtils {
 
-    public static String name(String prefixName, int suffixNum, int numOfDigits) {
-        long suffix = MathUtil.pow(10, numOfDigits) + suffixNum;
-        return String.format("%s_%s", prefixName, suffix);
+    public static String topicFn(String tenant, String namespace, String topic) {
+        return String.format("persistent://%s/%s/%s", tenant, namespace, topic);
     }
 
 }
