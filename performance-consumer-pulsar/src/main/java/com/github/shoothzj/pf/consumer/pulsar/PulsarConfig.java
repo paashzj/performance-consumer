@@ -82,8 +82,11 @@ public class PulsarConfig {
     @Value("${PULSAR_SUBSCRIPTION_TYPE:Exclusive}")
     public SubscriptionType subscriptionType;
 
-    @Value("${RECEIVE_QUEUE_SIZE:1000}")
+    @Value("${PULSAR_RECEIVE_QUEUE_SIZE:1000}")
     public int receiveQueueSize;
+
+    @Value("${PULSAR_SYNC_RECEIVE_TIMEOUT_MS:0}")
+    public int syncReceiveTimeoutMs;
 
     @Value("${PULSAR_CONSUME_BATCH:false}")
     public boolean consumeBatch;
