@@ -117,7 +117,8 @@ public class PulsarPullThread extends AbstractPullThread {
                 handleBatch(messages);
                 consumer.acknowledge(messages);
             } else {
-                final Message<byte[]> message = consumer.receive();
+                final Message<byte[]> message =
+                        consumer.receive(pulsarConfig.syncReceiveTimeoutMs, TimeUnit.MILLISECONDS);
                 handle(message);
                 consumer.acknowledge(message);
             }
@@ -133,6 +134,9 @@ public class PulsarPullThread extends AbstractPullThread {
     }
 
     private void handle(Message<byte[]> message) {
+        if (message == null) {
+            return;
+        }
         this.actionService.handleMsg(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 

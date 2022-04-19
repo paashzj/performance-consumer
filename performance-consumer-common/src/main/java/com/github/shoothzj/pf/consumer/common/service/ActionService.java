@@ -26,6 +26,7 @@ import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.ActionConfig;
 import com.github.shoothzj.pf.consumer.common.module.ActionType;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,7 +63,7 @@ public class ActionService {
         }
     }
 
-    public void handleMsg(ActionMsg msg) {
+    public void handleMsg(@NotNull ActionMsg msg) {
         blockIfNeeded();
         if (action != null) {
             action.handleMsg(msg);
