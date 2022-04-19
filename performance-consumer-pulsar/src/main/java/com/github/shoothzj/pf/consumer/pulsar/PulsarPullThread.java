@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.Messages;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -119,6 +120,9 @@ public class PulsarPullThread extends AbstractPullThread {
             } else {
                 final Message<byte[]> message =
                         consumer.receive(pulsarConfig.syncReceiveTimeoutMs, TimeUnit.MILLISECONDS);
+                if (message == null) {
+                    continue;
+                }
                 handle(message);
                 consumer.acknowledge(message);
             }
@@ -133,10 +137,7 @@ public class PulsarPullThread extends AbstractPullThread {
         this.actionService.handleBatchMsg(list);
     }
 
-    private void handle(Message<byte[]> message) {
-        if (message == null) {
-            return;
-        }
+    private void handle(@NotNull Message<byte[]> message) {
         this.actionService.handleMsg(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 
