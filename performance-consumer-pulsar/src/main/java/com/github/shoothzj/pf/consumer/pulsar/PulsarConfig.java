@@ -19,10 +19,13 @@
 
 package com.github.shoothzj.pf.consumer.pulsar;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 @Configuration
 @Service
@@ -82,6 +85,9 @@ public class PulsarConfig {
     @Value("${PULSAR_SUBSCRIPTION_TYPE:Exclusive}")
     public SubscriptionType subscriptionType;
 
+    @Value("${PULSAR_SUBSCRIPTION_NAME}")
+    public String subscriptionName;
+
     @Value("${PULSAR_RECEIVE_QUEUE_SIZE:1000}")
     public int receiveQueueSize;
 
@@ -115,4 +121,10 @@ public class PulsarConfig {
     @Value("${PULSAR_ACK_TIMEOUT_TICK_TIME_MILLISECONDS:100}")
     public int ackTimeoutTickTimeMilliseconds;
 
+    public String getSubscriptionName() {
+        if (StringUtils.isEmpty(subscriptionName)) {
+            return UUID.randomUUID().toString();
+        }
+        return subscriptionName;
+    }
 }

@@ -125,8 +125,8 @@ public class PulsarBootService {
     }
 
     public ConsumerBuilder<byte[]> createConsumerBuilder(String topic) {
-        ConsumerBuilder<byte[]> builder = pulsarClient.newConsumer().topic(topic)
-                .subscriptionName(UUID.randomUUID().toString());
+        ConsumerBuilder<byte[]> builder = pulsarClient.newConsumer().topic(topic);
+        builder = builder.subscriptionName(pulsarConfig.getSubscriptionName());
         builder = builder.subscriptionType(pulsarConfig.subscriptionType);
         if (pulsarConfig.autoUpdatePartition) {
             builder.autoUpdatePartitions(true);
