@@ -57,7 +57,7 @@ public class PulsarPullThread extends AbstractPullThread {
 
     @Override
     protected void pull() throws Exception {
-        if (pulsarConfig.rateLimiter != -1 && !rateLimiter.tryAcquire(5, TimeUnit.MILLISECONDS)) {
+        if (rateLimiter != null && !rateLimiter.tryAcquire(5, TimeUnit.MILLISECONDS)) {
             return;
         }
         if (pulsarConfig.consumeAsync) {
@@ -91,7 +91,7 @@ public class PulsarPullThread extends AbstractPullThread {
                 if (semaphore != null) {
                     semaphore.release();
                 }
-                log.error("batch receive ", ex);
+                log.error("batch receive error ", ex);
                 return null;
             });
         } else {
@@ -105,7 +105,7 @@ public class PulsarPullThread extends AbstractPullThread {
                 if (semaphore != null) {
                     semaphore.release();
                 }
-                log.error("receive ex ", ex);
+                log.error("receive error ", ex);
                 return null;
             });
         }

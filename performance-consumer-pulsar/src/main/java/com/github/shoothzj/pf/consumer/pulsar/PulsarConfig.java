@@ -85,7 +85,7 @@ public class PulsarConfig {
     @Value("${PULSAR_SUBSCRIPTION_TYPE:Exclusive}")
     public SubscriptionType subscriptionType;
 
-    @Value("${PULSAR_SUBSCRIPTION_NAME}")
+    @Value("${PULSAR_SUBSCRIPTION_NAME:}")
     public String subscriptionName;
 
     @Value("${PULSAR_RECEIVE_QUEUE_SIZE:1000}")
