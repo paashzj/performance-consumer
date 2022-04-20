@@ -51,20 +51,12 @@ public class BootService {
     @PostConstruct
     public void init() throws Exception {
         switch (pfConfig.middleware) {
-            case DUMMY:
-                log.info("dummy middleware");
-                break;
-            case KAFKA:
-                kafkaBootService.boot();
-                break;
-            case MQTT:
-                mqttBootService.boot();
-                break;
-            case PULSAR:
-                pulsarBootService.boot();
-                break;
-            default:
-                break;
+            case DUMMY -> log.info("dummy middleware");
+            case KAFKA -> kafkaBootService.boot();
+            case MQTT -> mqttBootService.boot();
+            case PULSAR -> pulsarBootService.boot();
+            default -> {
+            }
         }
     }
 
