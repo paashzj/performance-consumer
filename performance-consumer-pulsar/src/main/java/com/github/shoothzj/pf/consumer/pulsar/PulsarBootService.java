@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -74,28 +73,26 @@ public class PulsarBootService {
     }
 
     public void startConsumers(List<String> topics) {
-        String subscriptionName = UUID.randomUUID().toString();
         if (commonConfig.consumeMode.equals(ConsumeMode.LISTEN)) {
-            startConsumersListen(topics, subscriptionName);
+            startConsumersListen(topics);
         } else {
-            startConsumersPull(topics, subscriptionName);
+            startConsumersPull(topics);
         }
     }
 
-    public void startConsumersListen(List<String> topics, String subscriptionName) {
+    public void startConsumersListen(List<String> topics) {
         for (String topic : topics) {
             try {
                 createConsumerBuilder(topic)
                         .messageListener((MessageListener<byte[]>) (consumer, msg)
-                                -> log.debug("do nothing {}", msg.getMessageId())).subscriptionName(subscriptionName)
-                        .subscribe();
+                                -> log.debug("do nothing {}", msg.getMessageId())).subscribe();
             } catch (PulsarClientException e) {
                 log.error("create consumer fail. topic [{}]", topic, e);
             }
         }
     }
 
-    public void startConsumersPull(List<String> topics, String subscriptionName) {
+    public void startConsumersPull(List<String> topics) {
         List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
         List<Semaphore> semaphores = new ArrayList<>();
         for (int i = 0; i < commonConfig.pullThreads; i++) {
@@ -104,8 +101,7 @@ public class PulsarBootService {
         int aux = 0;
         for (String topic : topics) {
             try {
-                final Consumer<byte[]> consumer = createConsumerBuilder(topic)
-                        .subscriptionName(subscriptionName).subscribe();
+                final Consumer<byte[]> consumer = createConsumerBuilder(topic).subscribe();
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
