@@ -43,6 +43,15 @@ if [ -n "${PULSAR_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
   wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-transaction-common/"${PULSAR_JAR_VERSION}"/pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar
 fi
 
+if [ -n "${APOLLO_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
+  rm -rf /opt/sh/lib/apollo*
+
+  # download specify version jar of apollo
+  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/strip/framework/apollo/apollo-client/"${APOLLO_JAR_VERSION}"/apollo-client-"${APOLLO_JAR_VERSION}".jar
+  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/strip/framework/apollo/apollo-core/"${APOLLO_JAR_VERSION}"/apollo-core-"${APOLLO_JAR_VERSION}".jar
+  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/strip/framework/apollo/apollo-openapi/"${APOLLO_JAR_VERSION}"/apollo-openapi-"${APOLLO_JAR_VERSION}".jar
+fi
+
 # memory option
 if [ ! -n "$HEAP_MEM" ]; then
   HEAP_MEM="1G"
