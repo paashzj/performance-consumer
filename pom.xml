@@ -103,7 +103,15 @@
                 <configuration>
                     <xmlOutput>true</xmlOutput>
                     <failOnError>true</failOnError>
+                    <excludeFilterFile>ci/spotbugs/exclude.xml</excludeFilterFile>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
