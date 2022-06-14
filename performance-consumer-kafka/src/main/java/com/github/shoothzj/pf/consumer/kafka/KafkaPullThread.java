@@ -19,6 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.kafka;
 
+import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
 import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
@@ -27,6 +28,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
@@ -43,7 +45,9 @@ public class KafkaPullThread extends AbstractPullThread {
 
     private final KafkaConfig kafkaConfig;
 
-    private final KafkaConsumer<String, String> consumer;
+    private KafkaConsumer<byte[], byte[]> bytesConsumer;
+
+    private KafkaConsumer<String, String> stringConsumer;
 
     public KafkaPullThread(int i, ActionService actionService, List<String> topics, ExchangeType exchangeType,
                            KafkaConfig kafkaConfig) {
@@ -54,19 +58,49 @@ public class KafkaPullThread extends AbstractPullThread {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.addr);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.groupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaConfig.autoOffsetResetConfig);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, kafkaConfig.maxPollRecords);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        consumer = new KafkaConsumer<>(props);
-        consumer.subscribe(topics);
+        if (exchangeType.equals(ExchangeType.BYTES)) {
+            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class.getName());
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class.getName());
+            bytesConsumer = new KafkaConsumer<>(props);
+            bytesConsumer.subscribe(topics);
+        } else if (exchangeType.equals(ExchangeType.STRING)) {
+            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+            stringConsumer = new KafkaConsumer<>(props);
+            stringConsumer.subscribe(topics);
+        }
     }
 
     @Override
     protected void pull() throws Exception {
-        ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(kafkaConfig.pollMs));
+        if (exchangeType.equals(ExchangeType.BYTES)) {
+            bytesPull();
+        } else if (exchangeType.equals(ExchangeType.STRING)) {
+            stringPull();
+        }
+    }
+
+    protected void bytesPull() throws Exception {
+        ConsumerRecords<byte[], byte[]> consumerRecords = bytesConsumer.poll(Duration.ofMillis(kafkaConfig.pollMs));
+        for (ConsumerRecord<byte[], byte[]> consumerRecord : consumerRecords) {
+            log.debug("receive a record, offset is [{}]", consumerRecord.offset());
+            ActionMsg<byte[]> actionMsg = new ActionMsg<>();
+            actionMsg.setMessageId(String.valueOf(consumerRecord.offset()));
+            actionMsg.setContent(consumerRecord.value());
+            actionService.handleBytesMsg(actionMsg);
+        }
+    }
+
+    protected void stringPull() throws Exception {
+        ConsumerRecords<String, String> consumerRecords = stringConsumer.poll(Duration.ofMillis(kafkaConfig.pollMs));
         for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
             log.debug("receive a record, offset is [{}]", consumerRecord.offset());
+            ActionMsg<String> actionMsg = new ActionMsg<>();
+            actionMsg.setMessageId(String.valueOf(consumerRecord.offset()));
+            actionMsg.setContent(consumerRecord.value());
+            actionService.handleStrMsg(actionMsg);
         }
     }
 
