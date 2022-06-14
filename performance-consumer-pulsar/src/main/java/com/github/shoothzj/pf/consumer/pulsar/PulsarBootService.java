@@ -24,7 +24,13 @@ import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
 import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
 import com.github.shoothzj.pf.consumer.common.util.NameUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.client.api.BatchReceivePolicy;
+import org.apache.pulsar.client.api.ClientBuilder;
+import org.apache.pulsar.client.api.Consumer;
+import org.apache.pulsar.client.api.ConsumerBuilder;
+import org.apache.pulsar.client.api.MessageListener;
+import org.apache.pulsar.client.api.PulsarClient;
+import org.apache.pulsar.client.api.PulsarClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -58,20 +64,20 @@ public class PulsarBootService {
 
     public void boot() {
         try {
-            Map<String, String> map = new HashMap<>();
-            map.put("keyStoreType", pulsarConfig.keyStoreType);
-            map.put("keyStorePath", pulsarConfig.keyStorePath);
-            map.put("keyStorePassword", pulsarConfig.keyStorePassword);
             ClientBuilder clientBuilder = PulsarClient.builder()
                     .operationTimeout(pulsarConfig.operationTimeoutSeconds, TimeUnit.SECONDS)
-                    .ioThreads(pulsarConfig.ioThreads)
-                    .serviceUrl(String.format("http://%s:%s", pulsarConfig.host, pulsarConfig.port));
+                    .ioThreads(pulsarConfig.ioThreads);
             if (pulsarConfig.tlsEnable) {
-                pulsarClient = clientBuilder.allowTlsInsecureConnection(true).
+                Map<String, String> map = new HashMap<>();
+                map.put("keyStoreType", pulsarConfig.keyStoreType);
+                map.put("keyStorePath", pulsarConfig.keyStorePath);
+                map.put("keyStorePassword", pulsarConfig.keyStorePassword);
+                pulsarClient = clientBuilder.serviceUrl(String.format("https://%s:%s", pulsarConfig.host, pulsarConfig.port))
+                        .allowTlsInsecureConnection(true).
                         enableTlsHostnameVerification(false).useKeyStoreTls(true).
                         authentication(AUTH_PLUGIN_CLASS_NAME, map).build();
             } else {
-                pulsarClient = clientBuilder
+                pulsarClient = clientBuilder.serviceUrl(String.format("http://%s:%s", pulsarConfig.host, pulsarConfig.port))
                         .build();
             }
         } catch (Exception e) {
