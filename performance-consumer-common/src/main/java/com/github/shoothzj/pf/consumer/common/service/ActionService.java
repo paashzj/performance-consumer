@@ -22,6 +22,8 @@ package com.github.shoothzj.pf.consumer.common.service;
 import com.github.shoothzj.javatool.util.CommonUtil;
 import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.influx.InfluxAction;
+import com.github.shoothzj.pf.consumer.action.kafka.KafkaAction;
+import com.github.shoothzj.pf.consumer.action.log.LogAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.ActionConfig;
 import com.github.shoothzj.pf.consumer.common.module.ActionType;
@@ -50,6 +52,12 @@ public class ActionService {
     public void init() {
         if (actionConfig.actionType.equals(ActionType.INFLUX)) {
             action = new InfluxAction();
+            action.init();
+        } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
+            action = new KafkaAction();
+            action.init();
+        } else if (actionConfig.actionType.equals(ActionType.LOG)) {
+            action = new LogAction();
             action.init();
         } else {
             action = null;
