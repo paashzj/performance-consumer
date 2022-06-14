@@ -132,7 +132,8 @@ public class PulsarBootService {
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
-            new PulsarPullThread(i, actionService, semaphores, consumerListList.get(i), pulsarConfig).start();
+            new PulsarPullThread(i, actionService, semaphores, consumerListList.get(i), commonConfig.exchangeType,
+                    pulsarConfig).start();
         }
     }
 

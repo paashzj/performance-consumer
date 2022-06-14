@@ -73,7 +73,7 @@ public class KafkaBootService {
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start kafka pull thread {}", i);
-            new KafkaPullThread(i, actionService, strListList.get(i), kafkaConfig).start();
+            new KafkaPullThread(i, actionService, strListList.get(i), commonConfig.exchangeType, kafkaConfig).start();
         }
     }
 

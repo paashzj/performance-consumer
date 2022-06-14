@@ -17,28 +17,12 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.common.config;
+package com.github.shoothzj.pf.consumer.common.module;
 
-import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
-import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
+public enum ExchangeType {
 
-/**
- * @author hezhangjian
- */
-@Configuration
-@Service
-public class CommonConfig {
-
-    @Value("${CONSUME_MODE:PULL}")
-    public ConsumeMode consumeMode;
-
-    @Value("${EXCHANGE_TYPE:STRING}")
-    public ExchangeType exchangeType;
-
-    @Value("${PULL_THREADS:1}")
-    public int pullThreads;
+    BYTE_BUFFER,
+    BYTES,
+    STRING,
 
 }
