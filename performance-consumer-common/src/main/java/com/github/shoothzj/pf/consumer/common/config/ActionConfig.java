@@ -49,7 +49,10 @@ public class ActionConfig {
     @Value("${INFLUX_BUCKET:null}")
     public String influxBucket;
 
-    @Value("${LOG_REGEX}")
+    @Value("${KAFKA_ADDR:null}")
+    public String kafkaAddr;
+
+    @Value("${LOG_REGEX:null}")
     public String logRegex;
 
 }
