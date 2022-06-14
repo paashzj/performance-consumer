@@ -21,6 +21,7 @@ package com.github.shoothzj.pf.consumer.mqtt;
 
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -69,9 +70,17 @@ public class MqttBootService implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        ActionMsg<String> actionMsg = new ActionMsg<>();
-        actionMsg.setContent(new String(message.getPayload(), StandardCharsets.UTF_8));
-        this.actionService.handleStrMsg(actionMsg);
+        if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
+            ActionMsg<String> actionMsg = new ActionMsg<>();
+            actionMsg.setContent(new String(message.getPayload(), StandardCharsets.UTF_8));
+            this.actionService.handleStrMsg(actionMsg);
+        } else if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
+            ActionMsg<byte[]> actionMsg = new ActionMsg<>();
+            actionMsg.setContent(message.getPayload());
+            this.actionService.handleBytesMsg(actionMsg);
+        } else {
+            log.error("mqtt doesn't support byte buffer yet.");
+        }
     }
 
     @Override
