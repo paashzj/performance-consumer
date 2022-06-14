@@ -19,17 +19,25 @@
 
 package com.github.shoothzj.pf.consumer.action.module;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * @author hezhangjian
  */
 @Data
-@AllArgsConstructor
 public class ActionMsg {
+    private String messageId;
 
     private String content;
+
+    public ActionMsg(String content) {
+        this.content = content;
+    }
+
+    public ActionMsg(String messageId, String content) {
+        this.messageId = messageId;
+        this.content = content;
+    }
 
     public ActionMsg() {
     }
