@@ -138,7 +138,7 @@ public class PulsarPullThread extends AbstractPullThread {
     }
 
     private void handle(@NotNull Message<byte[]> message) {
-        this.actionService.handleMsg(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
+        this.actionService.handleMsg(new ActionMsg("msgID: " + message.getMessageId() + " " + new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 
 }
