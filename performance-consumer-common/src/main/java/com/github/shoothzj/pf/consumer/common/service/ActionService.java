@@ -57,7 +57,7 @@ public class ActionService {
             action = new KafkaAction();
             action.init();
         } else if (actionConfig.actionType.equals(ActionType.LOG)) {
-            action = new LogAction();
+            action = new LogAction(actionConfig.logRegex);
             action.init();
         } else {
             action = null;
