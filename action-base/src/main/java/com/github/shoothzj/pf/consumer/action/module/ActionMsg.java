@@ -27,7 +27,7 @@ import lombok.Data;
  */
 @Data
 public class ActionMsg {
-     private String ID;
+     private String messageId;
 
     private String content;
 
@@ -35,8 +35,8 @@ public class ActionMsg {
         this.content = content;
     }
 
-    public ActionMsg(String ID, String content) {
-        this.ID = ID;
+    public ActionMsg(String messageId, String content) {
+        this.messageId = messageId;
         this.content = content;
     }
 
