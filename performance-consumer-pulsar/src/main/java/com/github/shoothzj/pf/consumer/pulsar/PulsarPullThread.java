@@ -21,6 +21,7 @@ package com.github.shoothzj.pf.consumer.pulsar;
 
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class PulsarPullThread extends AbstractPullThread {
 
     private final List<Consumer<byte[]>> consumers;
 
+    private final ExchangeType exchangeType;
+
     private final PulsarConfig pulsarConfig;
 
     private final RateLimiter rateLimiter;
@@ -47,10 +50,11 @@ public class PulsarPullThread extends AbstractPullThread {
     private final List<Semaphore> semaphores;
 
     public PulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
-                            List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
+                            List<Consumer<byte[]>> consumers, ExchangeType exchangeType, PulsarConfig pulsarConfig) {
         super(i, actionService);
         this.semaphores = semaphores;
         this.consumers = consumers;
+        this.exchangeType = exchangeType;
         this.pulsarConfig = pulsarConfig;
         this.rateLimiter = pulsarConfig.rateLimiter == -1 ? null : RateLimiter.create(pulsarConfig.rateLimiter);
     }

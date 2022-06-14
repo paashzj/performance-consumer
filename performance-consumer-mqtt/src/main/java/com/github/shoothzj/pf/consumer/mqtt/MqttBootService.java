@@ -69,7 +69,7 @@ public class MqttBootService implements MqttCallback {
 
     @Override
     public void messageArrived(String topic, MqttMessage message) throws Exception {
-        ActionMsg actionMsg = new ActionMsg();
+        ActionMsg<String> actionMsg = new ActionMsg<>();
         actionMsg.setContent(new String(message.getPayload(), StandardCharsets.UTF_8));
         this.actionService.handleStrMsg(actionMsg);
     }

@@ -20,6 +20,7 @@
 package com.github.shoothzj.pf.consumer.kafka;
 
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -38,12 +39,16 @@ import java.util.Properties;
 @Slf4j
 public class KafkaPullThread extends AbstractPullThread {
 
+    private final ExchangeType exchangeType;
+
     private final KafkaConfig kafkaConfig;
 
     private final KafkaConsumer<String, String> consumer;
 
-    public KafkaPullThread(int i, ActionService actionService, List<String> topics, KafkaConfig kafkaConfig) {
+    public KafkaPullThread(int i, ActionService actionService, List<String> topics, ExchangeType exchangeType,
+                           KafkaConfig kafkaConfig) {
         super(i, actionService);
+        this.exchangeType = exchangeType;
         this.kafkaConfig = kafkaConfig;
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.addr);
