@@ -37,22 +37,22 @@ public class ActionConfig {
     @Value("${ACTION_BLOCK_DELAY_MS:0}")
     public int actionBlockDelayMs;
 
-    @Value("${INFLUX_ADDR:null}")
+    @Value("${ACTION_INFLUX_ADDR:null}")
     public String influxAddr;
 
-    @Value("${INFLUX_TOKEN:null}")
+    @Value("${ACTION_INFLUX_TOKEN:null}")
     public String influxToken;
 
-    @Value("${INFLUX_ORG:null}")
+    @Value("${ACTION_INFLUX_ORG:null}")
     public String influxOrg;
 
-    @Value("${INFLUX_BUCKET:null}")
+    @Value("${ACTION_INFLUX_BUCKET:null}")
     public String influxBucket;
 
-    @Value("${KAFKA_ADDR:null}")
+    @Value("${ACTION_KAFKA_ADDR:null}")
     public String kafkaAddr;
 
-    @Value("${LOG_REGEX:null}")
+    @Value("${ACTION_LOG_REGEX:null}")
     public String logRegex;
 
 }
