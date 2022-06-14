@@ -22,11 +22,23 @@ package com.github.shoothzj.pf.consumer.action.log;
 import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class LogAction extends AbstractAction {
+
+    private Optional<Pattern> logPattern;
+
+    public LogAction() {
+    }
+
+    public LogAction(@Nullable String logPattern) {
+        this.logPattern = Optional.ofNullable(logPattern).map(Pattern::compile);
+    }
 
     @Override
     public void init() {
@@ -42,7 +54,11 @@ public class LogAction extends AbstractAction {
 
     @Override
     public void handleStrMsg(ActionMsg<String> msg) {
-        log.info("action msg is {}", msg);
+        if (logPattern.isEmpty()) {
+            log.info("action msg is {}", msg);
+        } else if (logPattern.get().matcher(msg.getContent()).matches()) {
+            log.info("action msg is {}", msg);
+        }
     }
 
     @Override

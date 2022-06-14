@@ -49,4 +49,7 @@ public class ActionConfig {
     @Value("${INFLUX_BUCKET:null}")
     public String influxBucket;
 
+    @Value("${LOG_REGEX}")
+    public String logRegex;
+
 }
