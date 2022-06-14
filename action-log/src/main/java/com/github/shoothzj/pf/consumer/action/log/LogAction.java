@@ -34,14 +34,25 @@ public class LogAction extends AbstractAction {
     }
 
     @Override
-    public void handleBatchMsg(List<ActionMsg> msgList) {
-        for (ActionMsg actionMsg : msgList) {
-            this.handleMsg(actionMsg);
+    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
+        for (ActionMsg<String> actionMsg : msgList) {
+            this.handleStrMsg(actionMsg);
         }
     }
 
     @Override
-    public void handleMsg(ActionMsg msg) {
+    public void handleStrMsg(ActionMsg<String> msg) {
         log.info("action msg is {}", msg);
     }
+
+    @Override
+    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
+
+    }
+
+    @Override
+    public void handleBytesMsg(ActionMsg<byte[]> msg) {
+
+    }
+
 }

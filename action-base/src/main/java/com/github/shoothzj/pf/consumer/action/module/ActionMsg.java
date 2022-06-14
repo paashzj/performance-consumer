@@ -20,21 +20,23 @@
 package com.github.shoothzj.pf.consumer.action.module;
 
 import lombok.Data;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * @author hezhangjian
  */
 @Data
-public class ActionMsg {
+public class ActionMsg<T> {
+    @Nullable
     private String messageId;
 
-    private String content;
+    private T content;
 
-    public ActionMsg(String content) {
+    public ActionMsg(T content) {
         this.content = content;
     }
 
-    public ActionMsg(String messageId, String content) {
+    public ActionMsg(@Nullable String messageId, T content) {
         this.messageId = messageId;
         this.content = content;
     }

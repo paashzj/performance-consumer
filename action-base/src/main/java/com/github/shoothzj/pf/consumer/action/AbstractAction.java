@@ -32,8 +32,12 @@ public abstract class AbstractAction {
 
     public abstract void init();
 
-    public abstract void handleBatchMsg(List<ActionMsg> msgList);
+    public abstract void handleStrBatchMsg(List<ActionMsg<String>> msgList);
 
-    public abstract void handleMsg(ActionMsg msg);
+    public abstract void handleStrMsg(ActionMsg<String> msg);
+
+    public abstract void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList);
+
+    public abstract void handleBytesMsg(ActionMsg<byte[]> msg);
 
 }
