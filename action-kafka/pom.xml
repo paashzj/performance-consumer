@@ -29,7 +29,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>action-influxdb</artifactId>
+    <artifactId>action-kafka</artifactId>
 
     <dependencies>
         <dependency>
@@ -38,16 +38,8 @@
             <version>0.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.influxdb</groupId>
-            <artifactId>influxdb-client-java</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
         </dependency>
     </dependencies>
 
