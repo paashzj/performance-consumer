@@ -19,7 +19,6 @@
 
 package com.github.shoothzj.pf.consumer.action.module;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -27,7 +26,7 @@ import lombok.Data;
  */
 @Data
 public class ActionMsg {
-     private String messageId;
+    private String messageId;
 
     private String content;
 
