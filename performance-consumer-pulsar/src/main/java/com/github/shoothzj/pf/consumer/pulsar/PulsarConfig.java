@@ -121,6 +121,18 @@ public class PulsarConfig {
     @Value("${PULSAR_ACK_TIMEOUT_TICK_TIME_MILLISECONDS:100}")
     public int ackTimeoutTickTimeMilliseconds;
 
+    @Value("${PULSAR_TLS_ENABLE:false}")
+    public boolean tlsEnable;
+
+    @Value("${PULSAR_KEYSTORE_TYPE:}")
+    public String keyStoreType;
+
+    @Value("${PULSAR_KEYSTORE_PATH:}")
+    public String keyStorePath;
+
+    @Value("${PULSAR_KEYSTORE_PASSWORD:}")
+    public String keyStorePassword;
+
     public String getSubscriptionName() {
         if (StringUtils.isEmpty(subscriptionName)) {
             return UUID.randomUUID().toString();
