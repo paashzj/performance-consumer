@@ -132,13 +132,13 @@ public class PulsarPullThread extends AbstractPullThread {
     private void handleBatch(Messages<byte[]> messages) {
         final ArrayList<ActionMsg> list = new ArrayList<>();
         for (Message<byte[]> message : messages) {
-            list.add(new ActionMsg(new String(message.getValue(), StandardCharsets.UTF_8)));
+            list.add(new ActionMsg(message.getMessageId().toString(), new String(message.getValue(), StandardCharsets.UTF_8)));
         }
         this.actionService.handleBatchMsg(list);
     }
 
     private void handle(@NotNull Message<byte[]> message) {
-        this.actionService.handleMsg(new ActionMsg("msgID: " + message.getMessageId() + " " + new String(message.getValue(), StandardCharsets.UTF_8)));
+        this.actionService.handleMsg(new ActionMsg(message.getMessageId().toString(), new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 
 }

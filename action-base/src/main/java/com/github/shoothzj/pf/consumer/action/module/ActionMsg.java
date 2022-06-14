@@ -26,10 +26,19 @@ import lombok.Data;
  * @author hezhangjian
  */
 @Data
-@AllArgsConstructor
 public class ActionMsg {
+     private String ID;
 
     private String content;
+
+    public ActionMsg(String content) {
+        this.content = content;
+    }
+
+    public ActionMsg(String ID, String content) {
+        this.ID = ID;
+        this.content = content;
+    }
 
     public ActionMsg() {
     }
