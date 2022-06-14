@@ -78,6 +78,20 @@ public class ActionService {
         }
     }
 
+    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
+        blockIfNeeded();
+        if (action != null) {
+            action.handleBytesBatchMsg(msgList);
+        }
+    }
+
+    public void handleBytesMsg(@NotNull ActionMsg<byte[]> msg) {
+        blockIfNeeded();
+        if (action != null) {
+            action.handleBytesMsg(msg);
+        }
+    }
+
     private void blockIfNeeded() {
         if (actionConfig.actionBlockDelayMs != 0) {
             CommonUtil.sleep(TimeUnit.MILLISECONDS, actionConfig.actionBlockDelayMs);
