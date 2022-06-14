@@ -64,17 +64,17 @@ public class ActionService {
         }
     }
 
-    public void handleBatchMsg(List<ActionMsg> msgList) {
+    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
         blockIfNeeded();
         if (action != null) {
-            action.handleBatchMsg(msgList);
+            action.handleStrBatchMsg(msgList);
         }
     }
 
-    public void handleMsg(@NotNull ActionMsg msg) {
+    public void handleStrMsg(@NotNull ActionMsg<String> msg) {
         blockIfNeeded();
         if (action != null) {
-            action.handleMsg(msg);
+            action.handleStrMsg(msg);
         }
     }
 

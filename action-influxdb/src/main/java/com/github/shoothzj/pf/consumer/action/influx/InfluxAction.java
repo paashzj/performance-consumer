@@ -36,11 +36,23 @@ public class InfluxAction extends AbstractAction {
     }
 
     @Override
-    public void handleBatchMsg(List<ActionMsg> msgList) {
+    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
+
     }
 
     @Override
-    public void handleMsg(ActionMsg msg) {
+    public void handleStrMsg(ActionMsg<String> msg) {
+
+    }
+
+    @Override
+    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
+
+    }
+
+    @Override
+    public void handleBytesMsg(ActionMsg<byte[]> msg) {
+
     }
 
 }
