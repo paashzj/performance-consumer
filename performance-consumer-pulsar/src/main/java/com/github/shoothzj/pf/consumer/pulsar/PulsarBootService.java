@@ -78,7 +78,7 @@ public class PulsarBootService {
                 pulsarClient = clientBuilder.allowTlsInsecureConnection(true)
                         .serviceUrl(String.format("https://%s:%s", pulsarConfig.host, pulsarConfig.port))
                         .enableTlsHostnameVerification(false).useKeyStoreTls(true)
-                        .tlsTrustStoreType(pulsarConfig.tlsTrustStoreType)
+                        .tlsTrustStoreType("JKS")
                         .tlsTrustStorePath(pulsarConfig.tlsTrustStorePath)
                         .tlsTrustStorePassword(pulsarConfig.tlsTrustStorePassword)
                         .authentication(AUTH_PLUGIN_CLASS_NAME, map).build();

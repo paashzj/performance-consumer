@@ -124,22 +124,19 @@ public class PulsarConfig {
     @Value("${PULSAR_TLS_ENABLE:false}")
     public boolean tlsEnable;
 
-    @Value("${PULSAR_KEYSTORE_TYPE:null}")
+    @Value("${PULSAR_KEYSTORE_TYPE:}")
     public String keyStoreType;
 
-    @Value("${PULSAR_KEYSTORE_PATH:null}")
+    @Value("${PULSAR_KEYSTORE_PATH:nll}")
     public String keyStorePath;
 
-    @Value("${PULSAR_KEYSTORE_PASSWORD:null}")
+    @Value("${PULSAR_KEYSTORE_PASSWORD:}")
     public String keyStorePassword;
 
-    @Value("${PULSAR_TLS_TRUSTSTORE_TYPE:null}")
-    public String tlsTrustStoreType;
-
-    @Value("${PULSAR_TLS_TRUSTSTORE_PATH:null}")
+    @Value("${PULSAR_TLS_TRUSTSTORE_PATH:}")
     public String tlsTrustStorePath;
 
-    @Value("${PULSAR_TLS_TRUSTSTORE_PASSWORD:null}")
+    @Value("${PULSAR_TLS_TRUSTSTORE_PASSWORD:}")
     public String tlsTrustStorePassword;
 
     public String getSubscriptionName() {
