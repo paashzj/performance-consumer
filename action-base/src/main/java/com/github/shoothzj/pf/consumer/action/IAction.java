@@ -17,42 +17,18 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx;
+package com.github.shoothzj.pf.consumer.action;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-/**
- * @author hezhangjian
- */
-@Slf4j
-public class InfluxAction extends AbstractAction {
+public interface IAction<T> {
 
-    @Override
-    public void init() {
-    }
+    void init();
 
-    @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
+    void handleBatchMsg(List<ActionMsg<T>> msgList);
 
-    }
-
-    @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
-
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
-    }
+    void handleMsg(ActionMsg<T> msg);
 
 }

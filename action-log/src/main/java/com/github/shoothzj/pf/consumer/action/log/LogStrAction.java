@@ -19,7 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.action.log;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
+import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -29,14 +29,14 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class LogAction extends AbstractAction {
+public class LogStrAction implements IAction<String> {
 
     private Optional<Pattern> logPattern;
 
-    public LogAction() {
+    public LogStrAction() {
     }
 
-    public LogAction(@Nullable String logPattern) {
+    public LogStrAction(@Nullable String logPattern) {
         this.logPattern = Optional.ofNullable(logPattern).map(Pattern::compile);
     }
 
@@ -46,29 +46,19 @@ public class LogAction extends AbstractAction {
     }
 
     @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
-        for (ActionMsg<String> actionMsg : msgList) {
-            this.handleStrMsg(actionMsg);
+    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
+        for (ActionMsg<String> actionMsg : actionMsgs) {
+            this.handleMsg(actionMsg);
         }
     }
 
     @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
+    public void handleMsg(ActionMsg<String> msg) {
         if (logPattern.isEmpty()) {
             log.info("action msg is {}", msg);
         } else if (logPattern.get().matcher(msg.getContent()).matches()) {
             log.info("action msg is {}", msg);
         }
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
     }
 
 }
