@@ -20,6 +20,7 @@
 package com.github.shoothzj.pf.consumer.kafka;
 
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,11 @@ public class KafkaBootService {
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start kafka pull thread {}", i);
-            new KafkaPullThread(i, actionService, strListList.get(i), commonConfig.exchangeType, kafkaConfig).start();
+            if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
+                new KafkaPullBytesThread(i, actionService, strListList.get(i), kafkaConfig).start();
+            } else if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
+                new KafkaPullStringThread(i, actionService, strListList.get(i), kafkaConfig).start();
+            }
         }
     }
 
