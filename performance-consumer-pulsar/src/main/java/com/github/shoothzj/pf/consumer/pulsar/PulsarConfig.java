@@ -133,6 +133,15 @@ public class PulsarConfig {
     @Value("${PULSAR_KEYSTORE_PASSWORD:null}")
     public String keyStorePassword;
 
+    @Value("${PULSAR_TLS_TRUSTSTORE_TYPE:null}")
+    public String tlsTrustStoreType;
+
+    @Value("${PULSAR_TLS_TRUSTSTORE_PATH:null}")
+    public String tlsTrustStorePath;
+
+    @Value("${PULSAR_TLS_TRUSTSTORE_PASSWORD:null}")
+    public String tlsTrustStorePassword;
+
     public String getSubscriptionName() {
         if (StringUtils.isEmpty(subscriptionName)) {
             return UUID.randomUUID().toString();

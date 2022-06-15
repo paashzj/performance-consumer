@@ -72,9 +72,12 @@ public class PulsarBootService {
                 map.put("keyStoreType", pulsarConfig.keyStoreType);
                 map.put("keyStorePath", pulsarConfig.keyStorePath);
                 map.put("keyStorePassword", pulsarConfig.keyStorePassword);
-                pulsarClient = clientBuilder.serviceUrl(String.format("https://%s:%s", pulsarConfig.host,
-                                pulsarConfig.port)).allowTlsInsecureConnection(true)
+                pulsarClient = clientBuilder.allowTlsInsecureConnection(true)
+                        .serviceUrl(String.format("https://%s:%s", pulsarConfig.host, pulsarConfig.port))
                         .enableTlsHostnameVerification(false).useKeyStoreTls(true)
+                        .tlsTrustStoreType(pulsarConfig.tlsTrustStoreType)
+                        .tlsTrustStorePath(pulsarConfig.tlsTrustStorePath)
+                        .tlsTrustStorePassword(pulsarConfig.tlsTrustStorePassword)
                         .authentication(AUTH_PLUGIN_CLASS_NAME, map).build();
             } else {
                 pulsarClient = clientBuilder.serviceUrl(String.format("http://%s:%s", pulsarConfig.host,
