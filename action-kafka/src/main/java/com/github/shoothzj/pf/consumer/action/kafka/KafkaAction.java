@@ -22,6 +22,7 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 public class KafkaAction extends AbstractAction {
@@ -47,6 +48,16 @@ public class KafkaAction extends AbstractAction {
 
     @Override
     public void handleBytesMsg(ActionMsg<byte[]> msg) {
+
+    }
+
+    @Override
+    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
+
+    }
+
+    @Override
+    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
 
     }
 
