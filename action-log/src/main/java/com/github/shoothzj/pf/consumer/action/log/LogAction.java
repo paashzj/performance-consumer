@@ -24,6 +24,7 @@ import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -68,6 +69,16 @@ public class LogAction extends AbstractAction {
 
     @Override
     public void handleBytesMsg(ActionMsg<byte[]> msg) {
+
+    }
+
+    @Override
+    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
+
+    }
+
+    @Override
+    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
 
     }
 

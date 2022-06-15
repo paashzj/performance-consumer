@@ -22,6 +22,7 @@ package com.github.shoothzj.pf.consumer.action;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 
 /**
@@ -39,5 +40,9 @@ public abstract class AbstractAction {
     public abstract void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList);
 
     public abstract void handleBytesMsg(ActionMsg<byte[]> msg);
+
+    public abstract void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList);
+
+    public abstract void handleByteBufferMsg(ActionMsg<ByteBuffer> msg);
 
 }

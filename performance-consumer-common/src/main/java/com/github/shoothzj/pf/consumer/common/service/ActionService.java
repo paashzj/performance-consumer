@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -89,6 +90,20 @@ public class ActionService {
         blockIfNeeded();
         if (action != null) {
             action.handleBytesMsg(msg);
+        }
+    }
+
+    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
+        blockIfNeeded();
+        if (action != null) {
+            action.handleByteBufferBatchMsg(msgList);
+        }
+    }
+
+    public void handleByteBufferMsg(@NotNull ActionMsg<ByteBuffer> msg) {
+        blockIfNeeded();
+        if (action != null) {
+            action.handleByteBufferMsg(msg);
         }
     }
 

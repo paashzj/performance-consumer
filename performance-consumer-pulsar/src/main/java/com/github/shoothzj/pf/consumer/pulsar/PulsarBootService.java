@@ -19,6 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.pulsar;
 
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
 import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
@@ -31,9 +32,11 @@ import org.apache.pulsar.client.api.ConsumerBuilder;
 import org.apache.pulsar.client.api.MessageListener;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
+import org.apache.pulsar.client.api.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +102,7 @@ public class PulsarBootService {
     public void startConsumersListen(List<String> topics) {
         for (String topic : topics) {
             try {
-                createConsumerBuilder(topic)
+                createConsumerBuilderBytes(topic)
                         .messageListener((MessageListener<byte[]>) (consumer, msg)
                                 -> log.debug("do nothing {}", msg.getMessageId())).subscribe();
             } catch (PulsarClientException e) {
@@ -109,6 +112,16 @@ public class PulsarBootService {
     }
 
     public void startConsumersPull(List<String> topics) {
+        if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
+            startConsumersPullBytes(topics);
+        } else if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
+            startConsumersPullByteBuffer(topics);
+        } else if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
+            startConsumersPullString(topics);
+        }
+    }
+
+    public void startConsumersPullBytes(List<String> topics) {
         List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
         List<Semaphore> semaphores = new ArrayList<>();
         for (int i = 0; i < commonConfig.pullThreads; i++) {
@@ -117,7 +130,7 @@ public class PulsarBootService {
         int aux = 0;
         for (String topic : topics) {
             try {
-                final Consumer<byte[]> consumer = createConsumerBuilder(topic).subscribe();
+                final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -132,13 +145,93 @@ public class PulsarBootService {
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
-            new PulsarPullThread(i, actionService, semaphores, consumerListList.get(i), commonConfig.exchangeType,
+            new PulsarPullBytesThread(i, actionService, semaphores, consumerListList.get(i), commonConfig.exchangeType,
                     pulsarConfig).start();
         }
     }
 
-    public ConsumerBuilder<byte[]> createConsumerBuilder(String topic) {
+    public void startConsumersPullByteBuffer(List<String> topics) {
+        List<List<Consumer<ByteBuffer>>> consumerListList = new ArrayList<>();
+        List<Semaphore> semaphores = new ArrayList<>();
+        for (int i = 0; i < commonConfig.pullThreads; i++) {
+            consumerListList.add(new ArrayList<>());
+        }
+        int aux = 0;
+        for (String topic : topics) {
+            try {
+                final Consumer<ByteBuffer> consumer = createConsumerBuilderByteBuffer(topic).subscribe();
+                int index = aux % commonConfig.pullThreads;
+                consumerListList.get(index).add(consumer);
+                if (pulsarConfig.receiveLimiter == -1) {
+                    semaphores.add(null);
+                } else {
+                    semaphores.add(new Semaphore(pulsarConfig.receiveLimiter));
+                }
+                aux++;
+            } catch (PulsarClientException e) {
+                log.error("create consumer fail. topic [{}]", topic, e);
+            }
+        }
+        for (int i = 0; i < commonConfig.pullThreads; i++) {
+            log.info("start pulsar pull thread {}", i);
+            new PulsarPullByteBufferThread(i, actionService, semaphores, consumerListList.get(i),
+                    commonConfig.exchangeType, pulsarConfig).start();
+        }
+    }
+
+    public void startConsumersPullString(List<String> topics) {
+        List<List<Consumer<byte[]>>> consumerListList = new ArrayList<>();
+        List<Semaphore> semaphores = new ArrayList<>();
+        for (int i = 0; i < commonConfig.pullThreads; i++) {
+            consumerListList.add(new ArrayList<>());
+        }
+        int aux = 0;
+        for (String topic : topics) {
+            try {
+                final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
+                int index = aux % commonConfig.pullThreads;
+                consumerListList.get(index).add(consumer);
+                if (pulsarConfig.receiveLimiter == -1) {
+                    semaphores.add(null);
+                } else {
+                    semaphores.add(new Semaphore(pulsarConfig.receiveLimiter));
+                }
+                aux++;
+            } catch (PulsarClientException e) {
+                log.error("create consumer fail. topic [{}]", topic, e);
+            }
+        }
+        for (int i = 0; i < commonConfig.pullThreads; i++) {
+            log.info("start pulsar pull thread {}", i);
+            new PulsarPullStringThread(i, actionService, semaphores, consumerListList.get(i),
+                    commonConfig.exchangeType, pulsarConfig).start();
+        }
+    }
+
+    public ConsumerBuilder<byte[]> createConsumerBuilderBytes(String topic) {
         ConsumerBuilder<byte[]> builder = pulsarClient.newConsumer().topic(topic);
+        builder = builder.subscriptionName(pulsarConfig.getSubscriptionName());
+        builder = builder.subscriptionType(pulsarConfig.subscriptionType);
+        if (pulsarConfig.autoUpdatePartition) {
+            builder.autoUpdatePartitions(true);
+            builder.autoUpdatePartitionsInterval(pulsarConfig.autoUpdatePartitionSeconds, TimeUnit.SECONDS);
+        }
+        if (pulsarConfig.enableAckTimeout) {
+            builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
+            builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
+        }
+        builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
+        if (!pulsarConfig.consumeBatch) {
+            return builder;
+        }
+        final BatchReceivePolicy batchReceivePolicy = BatchReceivePolicy.builder()
+                .timeout(pulsarConfig.consumeBatchTimeoutMs, TimeUnit.MILLISECONDS)
+                .maxNumMessages(pulsarConfig.consumeBatchMaxMessages).build();
+        return builder.batchReceivePolicy(batchReceivePolicy);
+    }
+
+    public ConsumerBuilder<ByteBuffer> createConsumerBuilderByteBuffer(String topic) {
+        ConsumerBuilder<ByteBuffer> builder = pulsarClient.newConsumer(Schema.BYTEBUFFER).topic(topic);
         builder = builder.subscriptionName(pulsarConfig.getSubscriptionName());
         builder = builder.subscriptionType(pulsarConfig.subscriptionType);
         if (pulsarConfig.autoUpdatePartition) {
