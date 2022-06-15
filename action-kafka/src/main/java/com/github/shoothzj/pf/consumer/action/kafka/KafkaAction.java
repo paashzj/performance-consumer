@@ -21,13 +21,48 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 
 import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Properties;
 
 public class KafkaAction extends AbstractAction {
+    private String topic;
+    private String kafkaAddress;
+    private KafkaProducer<String, String> producer =  null;
+
+    public static KafkaAction getInstance(String kafkaAddress) {
+        return new KafkaAction(kafkaAddress);
+    }
+
+    public KafkaAction(@NotNull String topic, @NotNull String kafkaAddr) {
+        this.topic = topic;
+        this.kafkaAddress = kafkaAddr;
+    }
+
+    public KafkaAction(@NotNull String KafkaAddress) {
+        this.kafkaAddress = KafkaAddress;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(@NotNull String topic) {
+        this.topic = topic;
+    }
+
     @Override
     public void init() {
-
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.kafkaAddress);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        this.producer = new KafkaProducer<String, String>(properties);
     }
 
     @Override
@@ -37,7 +72,10 @@ public class KafkaAction extends AbstractAction {
 
     @Override
     public void handleStrMsg(ActionMsg<String> msg) {
-
+        ProducerRecord<String, String> record = new ProducerRecord<String, String>(this.topic, msg.toString());
+        try {this.producer.send(record);} catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

@@ -54,7 +54,7 @@ public class ActionService {
             action = new InfluxAction();
             action.init();
         } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-            action = new KafkaAction();
+            action = new KafkaAction(actionConfig.kafkaAddr);
             action.init();
         } else if (actionConfig.actionType.equals(ActionType.LOG)) {
             action = new LogAction(actionConfig.logRegex);

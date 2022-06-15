@@ -19,6 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.pulsar;
 
+import com.github.shoothzj.pf.consumer.action.kafka.KafkaAction;
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
@@ -141,6 +142,5 @@ public class PulsarPullThread extends AbstractPullThread {
     private void handle(@NotNull Message<byte[]> message) {
         this.actionService.handleStrMsg(new ActionMsg<>(message.getMessageId().toString(),
                 new String(message.getValue(), StandardCharsets.UTF_8)));
-        PushKafka.getInstance("test").handleStrMsg(new ActionMsg<>(new String(message.getValue(), StandardCharsets.UTF_8)));
     }
 }
