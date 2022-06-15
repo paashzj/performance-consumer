@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class PulsarPullByteBufferThread  extends AbstractPulsarPullThread<ByteBuffer> {
+public class PulsarPullByteBufferThread extends AbstractPulsarPullThread<ByteBuffer> {
 
     public PulsarPullByteBufferThread(int i, ActionService actionService, List<Semaphore> semaphores,
                                  List<Consumer<ByteBuffer>> consumers, ExchangeType exchangeType, PulsarConfig pulsarConfig) {

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 
-public class PulsarPullBytesThread  extends AbstractPulsarPullThread<byte[]> {
+public class PulsarPullBytesThread extends AbstractPulsarPullThread<byte[]> {
 
     public PulsarPullBytesThread(int i, ActionService actionService, List<Semaphore> semaphores,
                                   List<Consumer<byte[]>> consumers, ExchangeType exchangeType, PulsarConfig pulsarConfig) {
