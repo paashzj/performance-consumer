@@ -127,7 +127,7 @@ public class PulsarConfig {
     @Value("${PULSAR_KEYSTORE_TYPE:}")
     public String keyStoreType;
 
-    @Value("${PULSAR_KEYSTORE_PATH:nll}")
+    @Value("${PULSAR_KEYSTORE_PATH:}")
     public String keyStorePath;
 
     @Value("${PULSAR_KEYSTORE_PASSWORD:}")
