@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -20,29 +20,13 @@
 package com.github.shoothzj.pf.consumer.action;
 
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
-/**
- * @author hezhangjian
- */
-@Slf4j
-public abstract class AbstractAction {
+public interface IStrAction extends IAction {
 
-    public abstract void init();
+    void handleStrBatchMsg(List<ActionMsg<String>> msgList);
 
-    public abstract void handleStrBatchMsg(List<ActionMsg<String>> msgList);
-
-    public abstract void handleStrMsg(ActionMsg<String> msg);
-
-    public abstract void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList);
-
-    public abstract void handleBytesMsg(ActionMsg<byte[]> msg);
-
-    public abstract void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList);
-
-    public abstract void handleByteBufferMsg(ActionMsg<ByteBuffer> msg);
+    void handleStrMsg(ActionMsg<String> msg);
 
 }

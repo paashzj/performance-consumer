@@ -17,23 +17,17 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx;
+package com.github.shoothzj.pf.consumer.action.kafka;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
+import com.github.shoothzj.pf.consumer.action.IStrAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
-/**
- * @author hezhangjian
- */
-@Slf4j
-public class InfluxAction extends AbstractAction {
-
+public class KafkaStrAction implements IStrAction {
     @Override
     public void init() {
+
     }
 
     @Override
@@ -43,26 +37,6 @@ public class InfluxAction extends AbstractAction {
 
     @Override
     public void handleStrMsg(ActionMsg<String> msg) {
-
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
-    }
-
-    @Override
-    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
-
-    }
-
-    @Override
-    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
 
     }
 

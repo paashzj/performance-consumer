@@ -19,25 +19,24 @@
 
 package com.github.shoothzj.pf.consumer.action.log;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
+import com.github.shoothzj.pf.consumer.action.IStrAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class LogAction extends AbstractAction {
+public class LogStrAction implements IStrAction {
 
     private Optional<Pattern> logPattern;
 
-    public LogAction() {
+    public LogStrAction() {
     }
 
-    public LogAction(@Nullable String logPattern) {
+    public LogStrAction(@Nullable String logPattern) {
         this.logPattern = Optional.ofNullable(logPattern).map(Pattern::compile);
     }
 
@@ -60,26 +59,6 @@ public class LogAction extends AbstractAction {
         } else if (logPattern.get().matcher(msg.getContent()).matches()) {
             log.info("action msg is {}", msg);
         }
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
-    }
-
-    @Override
-    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
-
-    }
-
-    @Override
-    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
-
     }
 
 }
