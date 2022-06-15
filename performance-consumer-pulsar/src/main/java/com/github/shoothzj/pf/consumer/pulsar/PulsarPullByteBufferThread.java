@@ -34,9 +34,13 @@ import java.util.concurrent.Semaphore;
 
 public class PulsarPullByteBufferThread extends AbstractPulsarPullThread<ByteBuffer> {
 
-    public PulsarPullByteBufferThread(int i, ActionService actionService, List<Semaphore> semaphores,
-                                 List<Consumer<ByteBuffer>> consumers, ExchangeType exchangeType, PulsarConfig pulsarConfig) {
-        super(i, actionService, semaphores, consumers, exchangeType, pulsarConfig);
+    public PulsarPullByteBufferThread(int i,
+                                      ActionService actionService,
+                                      List<Semaphore> semaphores,
+                                      List<Consumer<ByteBuffer>> consumers,
+                                      PulsarConfig pulsarConfig
+    ) {
+        super(i, actionService, semaphores, consumers, pulsarConfig);
     }
 
     protected void handleBatch(Messages<ByteBuffer> messages) {

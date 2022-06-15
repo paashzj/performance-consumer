@@ -145,7 +145,7 @@ public class PulsarBootService {
         }
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
-            new PulsarPullBytesThread(i, actionService, semaphores, consumerListList.get(i), commonConfig.exchangeType,
+            new PulsarPullBytesThread(i, actionService, semaphores, consumerListList.get(i),
                     pulsarConfig).start();
         }
     }
@@ -175,7 +175,7 @@ public class PulsarBootService {
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
             new PulsarPullByteBufferThread(i, actionService, semaphores, consumerListList.get(i),
-                    commonConfig.exchangeType, pulsarConfig).start();
+                    pulsarConfig).start();
         }
     }
 
@@ -204,7 +204,7 @@ public class PulsarBootService {
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
             new PulsarPullStringThread(i, actionService, semaphores, consumerListList.get(i),
-                    commonConfig.exchangeType, pulsarConfig).start();
+                    pulsarConfig).start();
         }
     }
 

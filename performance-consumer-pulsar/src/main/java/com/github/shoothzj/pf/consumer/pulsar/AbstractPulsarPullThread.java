@@ -38,8 +38,6 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
 
     private final List<Consumer<T>> consumers;
 
-    private final ExchangeType exchangeType;
-
     private final PulsarConfig pulsarConfig;
 
     private final RateLimiter rateLimiter;
@@ -47,11 +45,10 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
     private final List<Semaphore> semaphores;
 
     public AbstractPulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
-                            List<Consumer<T>> consumers, ExchangeType exchangeType, PulsarConfig pulsarConfig) {
+                                    List<Consumer<T>> consumers, PulsarConfig pulsarConfig) {
         super(i, actionService);
         this.semaphores = semaphores;
         this.consumers = consumers;
-        this.exchangeType = exchangeType;
         this.pulsarConfig = pulsarConfig;
         this.rateLimiter = pulsarConfig.rateLimiter == -1 ? null : RateLimiter.create(pulsarConfig.rateLimiter);
     }
