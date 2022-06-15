@@ -19,25 +19,19 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
-import com.github.shoothzj.pf.consumer.action.IByteBufferAction;
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import org.apache.kafka.common.serialization.ByteBufferSerializer;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
-public class KafkaByteBufferAction implements IByteBufferAction {
-    @Override
-    public void init() {
+public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
 
+    public KafkaByteBufferAction(String kafkaAddr) {
+        super(kafkaAddr);
     }
 
     @Override
-    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
-
+    protected String getValueSerializerName() {
+        return ByteBufferSerializer.class.getName();
     }
 
-    @Override
-    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
-
-    }
 }

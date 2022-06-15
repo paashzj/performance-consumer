@@ -19,12 +19,12 @@
 
 package com.github.shoothzj.pf.consumer.action.influx;
 
-import com.github.shoothzj.pf.consumer.action.IStrAction;
+import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
 import java.util.List;
 
-public class InfluxStrAction implements IStrAction {
+public class InfluxStrAction implements IAction<String> {
 
     @Override
     public void init() {
@@ -32,12 +32,13 @@ public class InfluxStrAction implements IStrAction {
     }
 
     @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
+    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
 
     }
 
     @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
+    public void handleMsg(ActionMsg<String> msg) {
 
     }
+
 }

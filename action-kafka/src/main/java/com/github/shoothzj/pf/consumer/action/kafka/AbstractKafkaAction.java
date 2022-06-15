@@ -17,48 +17,47 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.log;
+package com.github.shoothzj.pf.consumer.action.kafka;
 
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.regex.Pattern;
+import java.util.Properties;
 
-@Slf4j
-public class LogStrAction implements IAction<String> {
+public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
-    private Optional<Pattern> logPattern;
+    private final String kafkaAddr;
 
-    public LogStrAction() {
-    }
+    private KafkaProducer<String, T> producer;
 
-    public LogStrAction(@Nullable String logPattern) {
-        this.logPattern = Optional.ofNullable(logPattern).map(Pattern::compile);
+    public AbstractKafkaAction(String kafkaAddr) {
+        this.kafkaAddr = kafkaAddr;
     }
 
     @Override
     public void init() {
-
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.kafkaAddr);
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, getValueSerializerName());
+        this.producer = new KafkaProducer<>(properties);
     }
 
+    protected abstract String getValueSerializerName();
+
     @Override
-    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
-        for (ActionMsg<String> actionMsg : actionMsgs) {
+    public void handleBatchMsg(List<ActionMsg<T>> actionMsgs) {
+        for (ActionMsg<T> actionMsg : actionMsgs) {
             this.handleMsg(actionMsg);
         }
     }
 
     @Override
-    public void handleMsg(ActionMsg<String> msg) {
-        if (logPattern.isEmpty()) {
-            log.info("action msg is {}", msg);
-        } else if (logPattern.get().matcher(msg.getContent()).matches()) {
-            log.info("action msg is {}", msg);
-        }
+    public void handleMsg(ActionMsg<T> msg) {
     }
 
 }
