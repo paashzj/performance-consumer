@@ -17,53 +17,21 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx;
+package com.github.shoothzj.pf.consumer.action.kafka;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.serialization.ByteBufferSerializer;
 
 import java.nio.ByteBuffer;
-import java.util.List;
 
-/**
- * @author hezhangjian
- */
-@Slf4j
-public class InfluxAction extends AbstractAction {
+public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
 
-    @Override
-    public void init() {
+    public KafkaByteBufferAction(String kafkaAddr) {
+        super(kafkaAddr);
     }
 
     @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
-
-    }
-
-    @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
-
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
-    }
-
-    @Override
-    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
-
-    }
-
-    @Override
-    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
-
+    protected String getValueSerializerName() {
+        return ByteBufferSerializer.class.getName();
     }
 
 }

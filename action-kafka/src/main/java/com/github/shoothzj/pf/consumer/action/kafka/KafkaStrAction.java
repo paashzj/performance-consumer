@@ -17,32 +17,19 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action;
+package com.github.shoothzj.pf.consumer.action.kafka;
 
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.nio.ByteBuffer;
-import java.util.List;
+public class KafkaStrAction extends AbstractKafkaAction<String> {
 
-/**
- * @author hezhangjian
- */
-@Slf4j
-public abstract class AbstractAction {
+    public KafkaStrAction(String kafkaAddr) {
+        super(kafkaAddr);
+    }
 
-    public abstract void init();
-
-    public abstract void handleStrBatchMsg(List<ActionMsg<String>> msgList);
-
-    public abstract void handleStrMsg(ActionMsg<String> msg);
-
-    public abstract void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList);
-
-    public abstract void handleBytesMsg(ActionMsg<byte[]> msg);
-
-    public abstract void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList);
-
-    public abstract void handleByteBufferMsg(ActionMsg<ByteBuffer> msg);
+    @Override
+    protected String getValueSerializerName() {
+        return StringSerializer.class.getName();
+    }
 
 }

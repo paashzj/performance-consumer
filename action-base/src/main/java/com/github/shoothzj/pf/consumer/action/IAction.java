@@ -17,48 +17,18 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.kafka;
+package com.github.shoothzj.pf.consumer.action;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
-import java.nio.ByteBuffer;
 import java.util.List;
 
-public class KafkaAction extends AbstractAction {
-    @Override
-    public void init() {
+public interface IAction<T> {
 
-    }
+    void init();
 
-    @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
+    void handleBatchMsg(List<ActionMsg<T>> msgList);
 
-    }
-
-    @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
-
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
-    }
-
-    @Override
-    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
-
-    }
-
-    @Override
-    public void handleByteBufferMsg(ActionMsg<ByteBuffer> msg) {
-
-    }
+    void handleMsg(ActionMsg<T> msg);
 
 }
