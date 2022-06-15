@@ -20,20 +20,26 @@
 package com.github.shoothzj.pf.consumer.common.service;
 
 import com.github.shoothzj.javatool.util.CommonUtil;
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
-import com.github.shoothzj.pf.consumer.action.influx.InfluxAction;
-import com.github.shoothzj.pf.consumer.action.kafka.KafkaAction;
-import com.github.shoothzj.pf.consumer.action.log.LogAction;
+import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.influx.InfluxStrAction;
+import com.github.shoothzj.pf.consumer.action.kafka.KafkaByteBufferAction;
+import com.github.shoothzj.pf.consumer.action.kafka.KafkaBytesAction;
+import com.github.shoothzj.pf.consumer.action.kafka.KafkaStrAction;
+import com.github.shoothzj.pf.consumer.action.log.LogStrAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.ActionConfig;
+import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
 import com.github.shoothzj.pf.consumer.common.module.ActionType;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -46,36 +52,69 @@ public class ActionService {
     @Autowired
     private ActionConfig actionConfig;
 
-    private AbstractAction action;
+    @Autowired
+    private CommonConfig commonConfig;
+
+    private Optional<IAction<ByteBuffer>> byteBufferAction = Optional.empty();
+
+    private Optional<IAction<byte[]>> bytesAction = Optional.empty();
+
+    private Optional<IAction<String>> strAction = Optional.empty();
 
     @PostConstruct
     public void init() {
-        if (actionConfig.actionType.equals(ActionType.INFLUX)) {
-            action = new InfluxAction();
-            action.init();
-        } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-            action = new KafkaAction();
-            action.init();
-        } else if (actionConfig.actionType.equals(ActionType.LOG)) {
-            action = new LogAction(actionConfig.logRegex);
-            action.init();
-        } else {
-            action = null;
+        if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
+            if (actionConfig.actionType.equals(ActionType.KAFKA)) {
+                byteBufferAction = Optional.of(new KafkaByteBufferAction(actionConfig.kafkaAddr));
+            }
         }
+        if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
+            if (actionConfig.actionType.equals(ActionType.KAFKA)) {
+                bytesAction = Optional.of(new KafkaBytesAction(actionConfig.kafkaAddr));
+            }
+        }
+        if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
+            if (actionConfig.actionType.equals(ActionType.INFLUX)) {
+                strAction = Optional.of(new InfluxStrAction());
+            } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
+                strAction = Optional.of(new KafkaStrAction(actionConfig.kafkaAddr));
+            } else if (actionConfig.actionType.equals(ActionType.LOG)) {
+                strAction = Optional.of(new LogStrAction());
+            }
+        }
+        byteBufferAction.ifPresent(IAction::init);
+        bytesAction.ifPresent(IAction::init);
+        strAction.ifPresent(IAction::init);
     }
 
     public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
         blockIfNeeded();
-        if (action != null) {
-            action.handleStrBatchMsg(msgList);
-        }
+        strAction.ifPresent(action -> action.handleBatchMsg(msgList));
     }
 
     public void handleStrMsg(@NotNull ActionMsg<String> msg) {
         blockIfNeeded();
-        if (action != null) {
-            action.handleStrMsg(msg);
-        }
+        strAction.ifPresent(action -> action.handleMsg(msg));
+    }
+
+    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
+        blockIfNeeded();
+        bytesAction.ifPresent(action -> action.handleBatchMsg(msgList));
+    }
+
+    public void handleBytesMsg(@NotNull ActionMsg<byte[]> msg) {
+        blockIfNeeded();
+        bytesAction.ifPresent(action -> action.handleMsg(msg));
+    }
+
+    public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
+        blockIfNeeded();
+        byteBufferAction.ifPresent(action -> action.handleBatchMsg(msgList));
+    }
+
+    public void handleByteBufferMsg(@NotNull ActionMsg<ByteBuffer> msg) {
+        blockIfNeeded();
+        byteBufferAction.ifPresent(action -> action.handleMsg(msg));
     }
 
     private void blockIfNeeded() {

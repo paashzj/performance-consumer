@@ -19,35 +19,17 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
-import com.github.shoothzj.pf.consumer.action.AbstractAction;
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.List;
+public class KafkaStrAction extends AbstractKafkaAction<String> {
 
-public class KafkaAction extends AbstractAction {
-    @Override
-    public void init() {
-
+    public KafkaStrAction(String kafkaAddr) {
+        super(kafkaAddr);
     }
 
     @Override
-    public void handleStrBatchMsg(List<ActionMsg<String>> msgList) {
-
-    }
-
-    @Override
-    public void handleStrMsg(ActionMsg<String> msg) {
-
-    }
-
-    @Override
-    public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
-
-    }
-
-    @Override
-    public void handleBytesMsg(ActionMsg<byte[]> msg) {
-
+    protected String getValueSerializerName() {
+        return StringSerializer.class.getName();
     }
 
 }

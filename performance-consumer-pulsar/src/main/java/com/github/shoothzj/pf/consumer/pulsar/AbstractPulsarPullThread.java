@@ -20,7 +20,6 @@
 package com.github.shoothzj.pf.consumer.pulsar;
 
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;
@@ -29,16 +28,14 @@ import org.apache.pulsar.client.api.Message;
 import org.apache.pulsar.client.api.Messages;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class PulsarPullThread extends AbstractPullThread {
+public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
 
-    private final List<Consumer<byte[]>> consumers;
+    private final List<Consumer<T>> consumers;
 
     private final PulsarConfig pulsarConfig;
 
@@ -46,8 +43,8 @@ public class PulsarPullThread extends AbstractPullThread {
 
     private final List<Semaphore> semaphores;
 
-    public PulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
-                            List<Consumer<byte[]>> consumers, PulsarConfig pulsarConfig) {
+    public AbstractPulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
+                                    List<Consumer<T>> consumers, PulsarConfig pulsarConfig) {
         super(i, actionService);
         this.semaphores = semaphores;
         this.consumers = consumers;
@@ -69,13 +66,13 @@ public class PulsarPullThread extends AbstractPullThread {
 
     private void asyncReceive() throws Exception {
         for (int i = 0; i < consumers.size(); i++) {
-            Consumer<byte[]> consumer = consumers.get(i);
+            Consumer<T> consumer = consumers.get(i);
             Semaphore semaphore = semaphores.get(i);
             asyncReceiveConsumer(consumer, semaphore);
         }
     }
 
-    private void asyncReceiveConsumer(Consumer<byte[]> consumer, Semaphore semaphore) {
+    private void asyncReceiveConsumer(Consumer<T> consumer, Semaphore semaphore) {
         if (semaphore != null && !semaphore.tryAcquire()) {
             return;
         }
@@ -112,13 +109,13 @@ public class PulsarPullThread extends AbstractPullThread {
     }
 
     private void syncReceive() throws Exception {
-        for (Consumer<byte[]> consumer : consumers) {
+        for (Consumer<T> consumer : consumers) {
             if (pulsarConfig.consumeBatch) {
-                final Messages<byte[]> messages = consumer.batchReceive();
+                final Messages<T> messages = consumer.batchReceive();
                 handleBatch(messages);
                 consumer.acknowledge(messages);
             } else {
-                final Message<byte[]> message =
+                final Message<T> message =
                         consumer.receive(pulsarConfig.syncReceiveTimeoutMs, TimeUnit.MILLISECONDS);
                 if (message == null) {
                     continue;
@@ -129,18 +126,8 @@ public class PulsarPullThread extends AbstractPullThread {
         }
     }
 
-    private void handleBatch(Messages<byte[]> messages) {
-        final ArrayList<ActionMsg<String>> list = new ArrayList<>();
-        for (Message<byte[]> message : messages) {
-            list.add(new ActionMsg<>(message.getMessageId().toString(),
-                    new String(message.getValue(), StandardCharsets.UTF_8)));
-        }
-        this.actionService.handleStrBatchMsg(list);
-    }
+    protected abstract void handleBatch(Messages<T> messages);
 
-    private void handle(@NotNull Message<byte[]> message) {
-        this.actionService.handleStrMsg(new ActionMsg<>(message.getMessageId().toString(),
-                                                   new String(message.getValue(), StandardCharsets.UTF_8)));
-    }
+    protected abstract void handle(@NotNull Message<T> message);
 
 }

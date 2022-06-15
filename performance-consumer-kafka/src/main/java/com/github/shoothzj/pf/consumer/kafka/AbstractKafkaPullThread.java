@@ -26,43 +26,46 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
-public class KafkaPullThread extends AbstractPullThread {
+public abstract class AbstractKafkaPullThread<T> extends AbstractPullThread {
 
     private final KafkaConfig kafkaConfig;
 
-    private final KafkaConsumer<String, String> consumer;
+    private final KafkaConsumer<T, T> consumer;
 
-    public KafkaPullThread(int i, ActionService actionService, List<String> topics, KafkaConfig kafkaConfig) {
+    public AbstractKafkaPullThread(int i, ActionService actionService, List<String> topics, KafkaConfig kafkaConfig) {
         super(i, actionService);
         this.kafkaConfig = kafkaConfig;
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaConfig.addr);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaConfig.groupId);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, kafkaConfig.autoOffsetResetConfig);
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, kafkaConfig.maxPollRecords);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializerName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializerName());
         consumer = new KafkaConsumer<>(props);
         consumer.subscribe(topics);
     }
 
+    protected abstract String getKeyDeserializerName();
+
+    protected abstract String getValueDeserializerName();
+
     @Override
     protected void pull() throws Exception {
-        ConsumerRecords<String, String> consumerRecords = consumer.poll(Duration.ofMillis(kafkaConfig.pollMs));
-        for (ConsumerRecord<String, String> consumerRecord : consumerRecords) {
-            log.debug("receive a record, offset is [{}]", consumerRecord.offset());
+        ConsumerRecords<T, T> consumerRecords = consumer.poll(Duration.ofMillis(kafkaConfig.pollMs));
+        for (ConsumerRecord<T, T> record : consumerRecords) {
+            log.debug("receive a record, offset is [{}]", record.offset());
+            this.handle(record);
         }
     }
+
+    protected abstract void handle(ConsumerRecord<T, T> record);
 
 }

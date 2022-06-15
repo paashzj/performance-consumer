@@ -17,27 +17,12 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action;
+package com.github.shoothzj.pf.consumer.common.module;
 
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import lombok.extern.slf4j.Slf4j;
+public enum ExchangeType {
 
-import java.util.List;
-
-/**
- * @author hezhangjian
- */
-@Slf4j
-public abstract class AbstractAction {
-
-    public abstract void init();
-
-    public abstract void handleStrBatchMsg(List<ActionMsg<String>> msgList);
-
-    public abstract void handleStrMsg(ActionMsg<String> msg);
-
-    public abstract void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList);
-
-    public abstract void handleBytesMsg(ActionMsg<byte[]> msg);
+    BYTE_BUFFER,
+    BYTES,
+    STRING,
 
 }

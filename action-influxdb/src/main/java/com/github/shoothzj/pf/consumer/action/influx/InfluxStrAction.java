@@ -17,28 +17,28 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.common.config;
+package com.github.shoothzj.pf.consumer.action.influx;
 
-import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
-import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
+import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
-/**
- * @author hezhangjian
- */
-@Configuration
-@Service
-public class CommonConfig {
+import java.util.List;
 
-    @Value("${CONSUME_MODE:PULL}")
-    public ConsumeMode consumeMode;
+public class InfluxStrAction implements IAction<String> {
 
-    @Value("${EXCHANGE_TYPE:STRING}")
-    public ExchangeType exchangeType;
+    @Override
+    public void init() {
 
-    @Value("${PULL_THREADS:1}")
-    public int pullThreads;
+    }
+
+    @Override
+    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
+
+    }
+
+    @Override
+    public void handleMsg(ActionMsg<String> msg) {
+
+    }
 
 }
