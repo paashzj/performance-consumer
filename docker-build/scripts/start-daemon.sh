@@ -22,34 +22,35 @@ cd "$(dirname "$0")"
 
 cd ..
 
-echo `pwd`
+PF_HOME=`pwd`
+echo $PF_HOME
 
-mkdir -p /opt/sh/logs
+mkdir -p $PF_HOME/logs
 
 if [ -n "${PULSAR_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
   # delete original version jar of pulsar
-  rm -rf /opt/sh/lib/pulsar-client*
-  rm -rf /opt/sh/lib/pulsar-common*
-  rm -rf /opt/sh/lib/pulsar-package-core*
-  rm -rf /opt/sh/lib/pulsar-transaction-common*
+  rm -rf $PF_HOME/lib/pulsar-client*
+  rm -rf $PF_HOME/lib/pulsar-common*
+  rm -rf $PF_HOME/lib/pulsar-package-core*
+  rm -rf $PF_HOME/lib/pulsar-transaction-common*
 
   # download specify version jar of pulsar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-api/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-api-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-original/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-original-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-api/"${PULSAR_JAR_VERSION}"/pulsar-client-api-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-original/"${PULSAR_JAR_VERSION}"/pulsar-client-original-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-common/"${PULSAR_JAR_VERSION}"/pulsar-common-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-package-core/"${PULSAR_JAR_VERSION}"/pulsar-package-core-"${PULSAR_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-transaction-common/"${PULSAR_JAR_VERSION}"/pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-api/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-api-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-admin-original/"${PULSAR_JAR_VERSION}"/pulsar-client-admin-original-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-api/"${PULSAR_JAR_VERSION}"/pulsar-client-api-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-client-original/"${PULSAR_JAR_VERSION}"/pulsar-client-original-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-common/"${PULSAR_JAR_VERSION}"/pulsar-common-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-package-core/"${PULSAR_JAR_VERSION}"/pulsar-package-core-"${PULSAR_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-transaction-common/"${PULSAR_JAR_VERSION}"/pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar
 fi
 
 if [ -n "${APOLLO_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
-  rm -rf /opt/sh/lib/apollo*
+  rm -rf $PF_HOME/lib/apollo*
 
   # download specify version jar of apollo
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-client/"${APOLLO_JAR_VERSION}"/apollo-client-"${APOLLO_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-core/"${APOLLO_JAR_VERSION}"/apollo-core-"${APOLLO_JAR_VERSION}".jar
-  wget -P /opt/sh/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-openapi/"${APOLLO_JAR_VERSION}"/apollo-openapi-"${APOLLO_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-client/"${APOLLO_JAR_VERSION}"/apollo-client-"${APOLLO_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-core/"${APOLLO_JAR_VERSION}"/apollo-core-"${APOLLO_JAR_VERSION}".jar
+  wget -P $PF_HOME/lib "${MAVEN_ADDRESS}"/com/ctrip/framework/apollo/apollo-openapi/"${APOLLO_JAR_VERSION}"/apollo-openapi-"${APOLLO_JAR_VERSION}".jar
 fi
 
 # memory option
@@ -65,6 +66,6 @@ JVM_OPT="-Xmx${HEAP_MEM} -Xms${HEAP_MEM} -XX:MaxDirectMemorySize=${DIR_MEM}"
 JVM_OPT="${JVM_OPT} -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:+ParallelRefProcEnabled -XX:+UnlockExperimentalVMOptions"
 JVM_OPT="${JVM_OPT} -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=4 -XX:ConcGCThreads=4"
 # gc log option
-JVM_OPT="${JVM_OPT} -Xlog:gc*=info,gc+phases=debug:/opt/sh/logs/gc.log:time,uptime:filecount=10,filesize=100M"
+JVM_OPT="${JVM_OPT} -Xlog:gc*=info,gc+phases=debug:$PF_HOME/logs/gc.log:time,uptime:filecount=10,filesize=100M"
 
-java $JAVA_OPT $JVM_OPT -Dlog4j.configurationFile=conf/log4j2.yaml -classpath /opt/sh/lib/*:/opt/sh/pf-consumer.jar:/opt/sh/conf/* com.github.shoothzj.pf.consumer.Main >>/opt/sh/logs/stdout.log 2>>/opt/sh/logs/stderr.log
+java $JAVA_OPT $JVM_OPT -Dlog4j.configurationFile=conf/log4j2.yaml -classpath $PF_HOME/lib/*:$PF_HOME/pf-consumer.jar:$PF_HOME/conf/* com.github.shoothzj.pf.consumer.Main >>$PF_HOME/logs/stdout.log 2>>$PF_HOME/logs/stderr.log
