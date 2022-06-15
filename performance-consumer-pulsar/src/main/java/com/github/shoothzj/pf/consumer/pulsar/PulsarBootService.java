@@ -72,7 +72,7 @@ public class PulsarBootService {
                     .ioThreads(pulsarConfig.ioThreads);
             if (pulsarConfig.tlsEnable) {
                 Map<String, String> map = new HashMap<>();
-                map.put("keyStoreType", pulsarConfig.keyStoreType);
+                map.put("keyStoreType", "JKS");
                 map.put("keyStorePath", pulsarConfig.keyStorePath);
                 map.put("keyStorePassword", pulsarConfig.keyStorePassword);
                 pulsarClient = clientBuilder.allowTlsInsecureConnection(true)

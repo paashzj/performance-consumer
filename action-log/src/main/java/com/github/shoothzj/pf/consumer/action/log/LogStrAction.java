@@ -22,7 +22,8 @@ package com.github.shoothzj.pf.consumer.action.log;
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -31,13 +32,14 @@ import java.util.regex.Pattern;
 @Slf4j
 public class LogStrAction implements IAction<String> {
 
-    private Optional<Pattern> logPattern;
+    private final Optional<Pattern> logPattern;
 
-    public LogStrAction() {
-    }
-
-    public LogStrAction(@Nullable String logPattern) {
-        this.logPattern = Optional.ofNullable(logPattern).map(Pattern::compile);
+    public LogStrAction(@NotNull String logPattern) {
+        if (StringUtils.EMPTY.equals(logPattern)) {
+            this.logPattern = Optional.empty();
+        } else {
+            this.logPattern = Optional.of(Pattern.compile(logPattern));
+        }
     }
 
     @Override

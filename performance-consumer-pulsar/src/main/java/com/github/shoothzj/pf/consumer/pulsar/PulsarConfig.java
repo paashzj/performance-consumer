@@ -124,9 +124,6 @@ public class PulsarConfig {
     @Value("${PULSAR_TLS_ENABLE:false}")
     public boolean tlsEnable;
 
-    @Value("${PULSAR_KEYSTORE_TYPE:}")
-    public String keyStoreType;
-
     @Value("${PULSAR_KEYSTORE_PATH:}")
     public String keyStorePath;
 
