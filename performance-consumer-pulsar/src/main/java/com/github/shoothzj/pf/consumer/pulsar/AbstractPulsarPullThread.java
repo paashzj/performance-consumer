@@ -20,7 +20,6 @@
 package com.github.shoothzj.pf.consumer.pulsar;
 
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
-import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.google.common.util.concurrent.RateLimiter;
 import lombok.extern.slf4j.Slf4j;

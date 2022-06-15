@@ -20,7 +20,6 @@
 package com.github.shoothzj.pf.consumer.pulsar;
 
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
-import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import org.apache.pulsar.client.api.Consumer;
 import org.apache.pulsar.client.api.Message;
