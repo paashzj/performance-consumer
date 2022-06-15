@@ -79,7 +79,7 @@ public class ActionService {
             } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
                 strAction = Optional.of(new KafkaStrAction(actionConfig.kafkaAddr));
             } else if (actionConfig.actionType.equals(ActionType.LOG)) {
-                strAction = Optional.of(new LogStrAction());
+                strAction = Optional.of(new LogStrAction(actionConfig.logRegex));
             }
         }
         byteBufferAction.ifPresent(IAction::init);
