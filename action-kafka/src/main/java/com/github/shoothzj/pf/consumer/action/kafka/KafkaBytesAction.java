@@ -20,7 +20,7 @@
 package com.github.shoothzj.pf.consumer.action.kafka;
 
 import io.micrometer.core.instrument.MeterRegistry;
-import org.apache.kafka.common.serialization.BytesSerializer;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 
 public class KafkaBytesAction extends AbstractKafkaAction<byte[]> {
     public KafkaBytesAction(ActionKafkaConfig kafkaConfig, MeterRegistry meterRegistry) {
@@ -29,7 +29,7 @@ public class KafkaBytesAction extends AbstractKafkaAction<byte[]> {
 
     @Override
     protected String getValueSerializerName() {
-        return BytesSerializer.class.getName();
+        return ByteArraySerializer.class.getName();
     }
 
 }

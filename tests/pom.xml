@@ -31,6 +31,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>scene-tests</module>
+        <module>test-util</module>
     </modules>
 
     <artifactId>tests</artifactId>

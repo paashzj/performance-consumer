@@ -29,19 +29,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>scene-tests</artifactId>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.shoothzj</groupId>
-            <artifactId>performance-consumer</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.shoothzj</groupId>
-            <artifactId>test-util</artifactId>
-            <version>0.0.1</version>
-        </dependency>
-    </dependencies>
+    <artifactId>test-util</artifactId>
 
 </project>

@@ -17,19 +17,10 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action;
+package com.github.shoothzj.pf.consumer;
 
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface IAction<T> {
-
-    void init();
-
-    void handleBatchMsg(List<ActionMsg<T>> msgList);
-
-    void handleMsg(ActionMsg<T> msg, Optional<MsgCallback> msgCallback);
-
+@SpringBootApplication(scanBasePackages = "com.github.shoothzj.pf.consumer")
+public class TestSbConfig {
 }

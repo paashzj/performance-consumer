@@ -20,6 +20,7 @@
 package com.github.shoothzj.pf.consumer.action.log;
 
 import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -50,12 +51,12 @@ public class LogStrAction implements IAction<String> {
     @Override
     public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
         for (ActionMsg<String> actionMsg : actionMsgs) {
-            this.handleMsg(actionMsg);
+            this.handleMsg(actionMsg, Optional.empty());
         }
     }
 
     @Override
-    public void handleMsg(ActionMsg<String> msg) {
+    public void handleMsg(ActionMsg<String> msg, Optional<MsgCallback> msgCallback) {
         if (logPattern.isEmpty()) {
             log.info("action msg is {}", msg);
         } else if (logPattern.get().matcher(msg.getContent()).matches()) {
