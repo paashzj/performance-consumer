@@ -233,12 +233,7 @@ public class PulsarBootService {
             builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
         }
-        if ("Earliest".equals(pulsarConfig.subscriptionInitialPosition)) {
-            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Earliest);
-        } else {
-            // default latest mode.
-            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Latest);
-        }
+        builder.subscriptionInitialPosition(pulsarConfig.subscriptionInitialPosition);
         builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
         if (!pulsarConfig.consumeBatch) {
             return builder;
