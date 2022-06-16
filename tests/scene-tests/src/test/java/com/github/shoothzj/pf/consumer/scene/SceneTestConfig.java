@@ -17,38 +17,10 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.kafka;
+package com.github.shoothzj.pf.consumer.scene;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-/**
- * @author hezhangjian
- */
-@Configuration
-@Service
-public class KafkaConfig {
-
-    @Value("${KAFKA_ADDR:localhost:9092}")
-    public String addr;
-
-    @Value("${KAFKA_TOPIC:}")
-    public String topic;
-
-    @Value("${KAFKA_TOPIC_SUFFIX_NUM:0}")
-    public int topicSuffixNum;
-
-    @Value("${KAFKA_GROUP_ID:}")
-    public String groupId;
-
-    @Value("${KAFKA_AUTO_OFFSET_RESET_CONFIG:latest}")
-    public String autoOffsetResetConfig;
-
-    @Value("${KAFKA_MAX_POLL_RECORDS:500}")
-    public int maxPollRecords;
-
-    @Value("${KAFKA_POLL_MS:500}")
-    public int pollMs;
-
+@SpringBootApplication(scanBasePackages = "com.github.shoothzj.pf.consumer")
+public class SceneTestConfig {
 }
