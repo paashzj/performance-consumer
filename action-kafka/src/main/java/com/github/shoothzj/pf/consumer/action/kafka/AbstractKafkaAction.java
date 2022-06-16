@@ -38,18 +38,18 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private String topic;
 
+    private KafkaProducer<String, T> producer;
+
+    public AbstractKafkaAction(String kafkaAddr) {
+        this.kafkaAddr = kafkaAddr;
+    }
+
     public String getTopic() {
         return topic;
     }
 
     public void setTopic(String topic) {
         this.topic = topic;
-    }
-
-    private KafkaProducer<String, T> producer;
-
-    public AbstractKafkaAction(String kafkaAddr) {
-        this.kafkaAddr = kafkaAddr;
     }
 
     @Override
@@ -75,9 +75,9 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
         ProducerRecord<String, T> record = new ProducerRecord<String, T>(this.topic, msg.getContent());
         try {
             RecordMetadata recordMetadata = this.producer.send(record).get();
-            log.info("index offset: {}", recordMetadata.offset());
+            log.info("partition: {}, offset: {}", recordMetadata.partition(), recordMetadata.offset());
         } catch (Exception e) {
-            log.error("send fail", e);
+            log.error("send fail ", e);
         }
     }
 

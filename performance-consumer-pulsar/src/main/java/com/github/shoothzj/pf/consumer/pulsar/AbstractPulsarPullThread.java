@@ -19,7 +19,6 @@
 
 package com.github.shoothzj.pf.consumer.pulsar;
 
-import com.github.shoothzj.pf.consumer.action.kafka.KafkaAction;
 import com.github.shoothzj.pf.consumer.common.AbstractPullThread;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.google.common.util.concurrent.RateLimiter;
