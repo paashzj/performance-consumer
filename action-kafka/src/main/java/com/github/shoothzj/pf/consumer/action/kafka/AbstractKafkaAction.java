@@ -21,21 +21,29 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.List;
 import java.util.Properties;
 
+@Slf4j
 public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private final String kafkaAddr;
+
+    private final String topic;
 
     private KafkaProducer<String, T> producer;
 
     public AbstractKafkaAction(ActionKafkaConfig kafkaConfig) {
         this.kafkaAddr = kafkaConfig.addr;
+        this.topic = kafkaConfig.topic;
     }
 
     @Override
@@ -58,6 +66,17 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     @Override
     public void handleMsg(ActionMsg<T> msg) {
+        producer.send(new ProducerRecord<>(topic, msg.getContent()), new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                if (exception == null) {
+                    log.info("send kafka message id {} partition {} success {}",
+                            msg.getMessageId(), metadata.partition(), metadata.offset());
+                } else {
+                    log.error("send kafka fail, message id {}", msg.getMessageId(), exception);
+                }
+            }
+        });
     }
 
 }
