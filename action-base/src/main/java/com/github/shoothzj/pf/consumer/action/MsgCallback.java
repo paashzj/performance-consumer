@@ -19,17 +19,10 @@
 
 package com.github.shoothzj.pf.consumer.action;
 
-import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+public interface MsgCallback {
 
-import java.util.List;
-import java.util.Optional;
+    void success(String msgId);
 
-public interface IAction<T> {
-
-    void init();
-
-    void handleBatchMsg(List<ActionMsg<T>> msgList);
-
-    void handleMsg(ActionMsg<T> msg, Optional<MsgCallback> msgCallback);
+    void fail(String msgId);
 
 }

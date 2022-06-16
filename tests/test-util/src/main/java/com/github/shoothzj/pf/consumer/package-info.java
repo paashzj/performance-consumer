@@ -16,11 +16,4 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-package com.github.shoothzj.pf.consumer.scene;
-
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication(scanBasePackages = "com.github.shoothzj.pf.consumer")
-public class SceneTestConfig {
-}
+package com.github.shoothzj.pf.consumer;

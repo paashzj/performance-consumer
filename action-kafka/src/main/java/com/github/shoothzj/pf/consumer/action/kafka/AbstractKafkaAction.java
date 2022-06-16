@@ -21,18 +21,18 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 
 import com.github.shoothzj.pf.consumer.action.ActionMetricsBean;
 import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.action.module.ActionType;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 @Slf4j
@@ -42,7 +42,7 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private final String topic;
 
-    private ActionMetricsBean metricsBean;
+    private final ActionMetricsBean metricsBean;
 
     private KafkaProducer<String, T> producer;
 
@@ -66,24 +66,23 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
     @Override
     public void handleBatchMsg(List<ActionMsg<T>> actionMsgs) {
         for (ActionMsg<T> actionMsg : actionMsgs) {
-            this.handleMsg(actionMsg);
+            this.handleMsg(actionMsg, Optional.empty());
         }
     }
 
     @Override
-    public void handleMsg(ActionMsg<T> msg) {
+    public void handleMsg(ActionMsg<T> msg, Optional<MsgCallback> msgCallback) {
         long startTime = System.currentTimeMillis();
-        producer.send(new ProducerRecord<>(topic, msg.getContent()), new Callback() {
-            @Override
-            public void onCompletion(RecordMetadata metadata, Exception exception) {
-                if (exception == null) {
-                    metricsBean.success(System.currentTimeMillis() - startTime);
-                    log.info("send kafka message id {} partition {} success {}",
-                            msg.getMessageId(), metadata.partition(), metadata.offset());
-                } else {
-                    metricsBean.fail(System.currentTimeMillis() - startTime);
-                    log.error("send kafka fail, message id {}", msg.getMessageId(), exception);
-                }
+        producer.send(new ProducerRecord<>(topic, msg.getContent()), (metadata, exception) -> {
+            if (exception == null) {
+                msgCallback.ifPresent(callback -> callback.success(msg.getMessageId()));
+                metricsBean.success(System.currentTimeMillis() - startTime);
+                log.info("send kafka message id {} partition {} success {}",
+                        msg.getMessageId(), metadata.partition(), metadata.offset());
+            } else {
+                msgCallback.ifPresent(callback -> callback.fail(msg.getMessageId()));
+                metricsBean.fail(System.currentTimeMillis() - startTime);
+                log.error("send kafka fail, message id {}", msg.getMessageId(), exception);
             }
         });
     }

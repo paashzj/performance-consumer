@@ -21,6 +21,7 @@ package com.github.shoothzj.pf.consumer.common.service;
 
 import com.github.shoothzj.javatool.util.CommonUtil;
 import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
 import com.github.shoothzj.pf.consumer.action.influx.ActionInfluxConfig;
 import com.github.shoothzj.pf.consumer.action.influx.InfluxStrAction;
 import com.github.shoothzj.pf.consumer.action.kafka.ActionKafkaConfig;
@@ -74,6 +75,8 @@ public class ActionService {
 
     private Optional<IAction<String>> strAction = Optional.empty();
 
+    private final Optional<MsgCallback> msgCallback = Optional.empty();
+
     @PostConstruct
     public void init() {
         if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
@@ -107,7 +110,7 @@ public class ActionService {
 
     public void handleStrMsg(@NotNull ActionMsg<String> msg) {
         blockIfNeeded();
-        strAction.ifPresent(action -> action.handleMsg(msg));
+        strAction.ifPresent(action -> action.handleMsg(msg, msgCallback));
     }
 
     public void handleBytesBatchMsg(List<ActionMsg<byte[]>> msgList) {
@@ -117,7 +120,7 @@ public class ActionService {
 
     public void handleBytesMsg(@NotNull ActionMsg<byte[]> msg) {
         blockIfNeeded();
-        bytesAction.ifPresent(action -> action.handleMsg(msg));
+        bytesAction.ifPresent(action -> action.handleMsg(msg, msgCallback));
     }
 
     public void handleByteBufferBatchMsg(List<ActionMsg<ByteBuffer>> msgList) {
@@ -127,7 +130,7 @@ public class ActionService {
 
     public void handleByteBufferMsg(@NotNull ActionMsg<ByteBuffer> msg) {
         blockIfNeeded();
-        byteBufferAction.ifPresent(action -> action.handleMsg(msg));
+        byteBufferAction.ifPresent(action -> action.handleMsg(msg, msgCallback));
     }
 
     private void blockIfNeeded() {

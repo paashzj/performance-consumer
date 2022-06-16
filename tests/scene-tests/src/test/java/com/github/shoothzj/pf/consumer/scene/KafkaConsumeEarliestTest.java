@@ -20,6 +20,7 @@
 package com.github.shoothzj.pf.consumer.scene;
 
 import com.github.shoothzj.javatool.util.CommonUtil;
+import com.github.shoothzj.pf.consumer.TestSbConfig;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.github.shoothzj.test.kafka.TestKfkServer;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = SceneTestConfig.class, properties = {"MIDDLEWARE=KAFKA"})
+@SpringBootTest(classes = TestSbConfig.class, properties = {"MIDDLEWARE=KAFKA"})
 public class KafkaConsumeEarliestTest {
 
     final TestKfkServer testKfkServer = new TestKfkServer();

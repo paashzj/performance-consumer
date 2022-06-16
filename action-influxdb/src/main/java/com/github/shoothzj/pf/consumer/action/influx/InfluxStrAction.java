@@ -20,9 +20,11 @@
 package com.github.shoothzj.pf.consumer.action.influx;
 
 import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
 import java.util.List;
+import java.util.Optional;
 
 public class InfluxStrAction implements IAction<String> {
 
@@ -37,7 +39,7 @@ public class InfluxStrAction implements IAction<String> {
     }
 
     @Override
-    public void handleMsg(ActionMsg<String> msg) {
+    public void handleMsg(ActionMsg<String> msg, Optional<MsgCallback> msgCallback) {
 
     }
 
