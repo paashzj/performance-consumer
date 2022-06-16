@@ -19,8 +19,11 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
+import com.github.shoothzj.pf.consumer.action.ActionMetricsBean;
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import com.github.shoothzj.pf.consumer.action.module.ActionType;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -39,11 +42,14 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private final String topic;
 
+    private ActionMetricsBean metricsBean;
+
     private KafkaProducer<String, T> producer;
 
-    public AbstractKafkaAction(ActionKafkaConfig kafkaConfig) {
+    public AbstractKafkaAction(ActionKafkaConfig kafkaConfig, MeterRegistry meterRegistry) {
         this.kafkaAddr = kafkaConfig.addr;
         this.topic = kafkaConfig.topic;
+        this.metricsBean = new ActionMetricsBean(meterRegistry, ActionType.KAFKA);
     }
 
     @Override
@@ -66,13 +72,16 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     @Override
     public void handleMsg(ActionMsg<T> msg) {
+        long startTime = System.currentTimeMillis();
         producer.send(new ProducerRecord<>(topic, msg.getContent()), new Callback() {
             @Override
             public void onCompletion(RecordMetadata metadata, Exception exception) {
                 if (exception == null) {
+                    metricsBean.success(System.currentTimeMillis() - startTime);
                     log.info("send kafka message id {} partition {} success {}",
                             msg.getMessageId(), metadata.partition(), metadata.offset());
                 } else {
+                    metricsBean.fail(System.currentTimeMillis() - startTime);
                     log.error("send kafka fail, message id {}", msg.getMessageId(), exception);
                 }
             }

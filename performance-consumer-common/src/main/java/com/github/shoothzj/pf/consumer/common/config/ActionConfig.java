@@ -19,7 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.common.config;
 
-import com.github.shoothzj.pf.consumer.common.module.ActionType;
+import com.github.shoothzj.pf.consumer.action.module.ActionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
