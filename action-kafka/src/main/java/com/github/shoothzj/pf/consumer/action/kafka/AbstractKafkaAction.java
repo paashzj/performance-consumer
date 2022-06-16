@@ -72,6 +72,9 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     @Override
     public void handleMsg(ActionMsg<T> msg) {
+        if (this.topic.isEmpty()) {
+            this.topic = "test";
+        }
         ProducerRecord<String, T> record = new ProducerRecord<String, T>(this.topic, msg.getContent());
         try {
             RecordMetadata recordMetadata = this.producer.send(record).get();

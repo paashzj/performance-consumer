@@ -19,17 +19,40 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
+import org.apache.kafka.common.serialization.ByteBufferSerializer;
+import org.apache.kafka.common.serialization.BytesSerializer;
+import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.Test;
 
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.Properties;
+
+@Slf4j
 class TestAbstractKafkaAction {
 
     @Test
-    void handleBatchMsg() {
-    }
-
-    @Test
     void handleMsg() {
-
+        Properties properties = new Properties();
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteBufferSerializer.class.getName());
+        KafkaProducer<String, ByteBuffer> producer = new KafkaProducer<>(properties);
+        ByteBuffer buff = ByteBuffer.wrap("byte buffer".getBytes(StandardCharsets.UTF_8));
+        ProducerRecord<String, ByteBuffer> record = new ProducerRecord<String, ByteBuffer>("test", buff);
+        try {
+            RecordMetadata recordMetadata = producer.send(record).get();
+            log.info("partition: {}, offset: {}", recordMetadata.partition(), recordMetadata.offset());
+        } catch (Exception e) {
+            log.error("send fail ", e);
+        }
     }
 
 }

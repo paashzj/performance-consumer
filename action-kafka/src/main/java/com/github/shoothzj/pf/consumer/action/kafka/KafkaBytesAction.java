@@ -19,7 +19,7 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
-import org.apache.kafka.common.serialization.BytesSerializer;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 
 public class KafkaBytesAction extends AbstractKafkaAction<byte[]> {
     public KafkaBytesAction(String kafkaAddr) {
@@ -28,7 +28,7 @@ public class KafkaBytesAction extends AbstractKafkaAction<byte[]> {
 
     @Override
     protected String getValueSerializerName() {
-        return BytesSerializer.class.getName();
+        return ByteArraySerializer.class.getName();
     }
 
 }
