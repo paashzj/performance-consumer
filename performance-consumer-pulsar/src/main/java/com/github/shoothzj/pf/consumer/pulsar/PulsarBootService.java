@@ -33,6 +33,7 @@ import org.apache.pulsar.client.api.MessageListener;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
+import org.apache.pulsar.client.api.SubscriptionInitialPosition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,7 +73,7 @@ public class PulsarBootService {
                     .ioThreads(pulsarConfig.ioThreads);
             if (pulsarConfig.tlsEnable) {
                 Map<String, String> map = new HashMap<>();
-                map.put("keyStoreType", pulsarConfig.keyStoreType);
+                map.put("keyStoreType", "JKS");
                 map.put("keyStorePath", pulsarConfig.keyStorePath);
                 map.put("keyStorePassword", pulsarConfig.keyStorePassword);
                 pulsarClient = clientBuilder.allowTlsInsecureConnection(true)
@@ -134,6 +135,9 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
+                if (pulsarConfig.subscriptionSeekTimestamp != 0) {
+                    consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
+                }
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -163,6 +167,9 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<ByteBuffer> consumer = createConsumerBuilderByteBuffer(topic).subscribe();
+                if (pulsarConfig.subscriptionSeekTimestamp != 0) {
+                    consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
+                }
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -192,6 +199,9 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
+                if (pulsarConfig.subscriptionSeekTimestamp != 0) {
+                    consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
+                }
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -223,6 +233,7 @@ public class PulsarBootService {
             builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
         }
+        builder.subscriptionInitialPosition(pulsarConfig.subscriptionInitialPosition);
         builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
         if (!pulsarConfig.consumeBatch) {
             return builder;
@@ -244,6 +255,11 @@ public class PulsarBootService {
         if (pulsarConfig.enableAckTimeout) {
             builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
+        }
+        if ("Earliest".equals(pulsarConfig.subscriptionInitialPosition)) {
+            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Earliest);
+        } else {
+            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Latest);
         }
         builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
         if (!pulsarConfig.consumeBatch) {
