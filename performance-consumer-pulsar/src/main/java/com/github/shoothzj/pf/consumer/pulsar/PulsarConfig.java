@@ -136,6 +136,12 @@ public class PulsarConfig {
     @Value("${PULSAR_TLS_TRUSTSTORE_PASSWORD:}")
     public String tlsTrustStorePassword;
 
+    @Value("${PULSAR_SEEK_TIMESTAMP:0}")
+    public Long seekTimestamp;
+
+    @Value("${PULSAR_SUBSCRIPTION_INITIAL_POSITION:Latest}")
+    public String subscriptionInitialPosition;
+
     public String getSubscriptionName() {
         if (StringUtils.isEmpty(subscriptionName)) {
             return UUID.randomUUID().toString();
