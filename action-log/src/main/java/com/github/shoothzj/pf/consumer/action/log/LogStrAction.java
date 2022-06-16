@@ -34,11 +34,11 @@ public class LogStrAction implements IAction<String> {
 
     private final Optional<Pattern> logPattern;
 
-    public LogStrAction(@NotNull String logPattern) {
-        if (StringUtils.EMPTY.equals(logPattern)) {
+    public LogStrAction(@NotNull ActionLogConfig logConfig) {
+        if (StringUtils.EMPTY.equals(logConfig.regex)) {
             this.logPattern = Optional.empty();
         } else {
-            this.logPattern = Optional.of(Pattern.compile(logPattern));
+            this.logPattern = Optional.of(Pattern.compile(logConfig.regex));
         }
     }
 

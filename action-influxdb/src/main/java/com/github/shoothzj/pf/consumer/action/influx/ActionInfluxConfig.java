@@ -17,21 +17,26 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.kafka;
+package com.github.shoothzj.pf.consumer.action.influx;
 
-import org.apache.kafka.common.serialization.ByteBufferSerializer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-import java.nio.ByteBuffer;
+@Configuration
+@Service
+public class ActionInfluxConfig {
 
-public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
+    @Value("${ACTION_INFLUX_ADDR:}")
+    public String addr;
 
-    public KafkaByteBufferAction(ActionKafkaConfig kafkaConfig) {
-        super(kafkaConfig);
-    }
+    @Value("${ACTION_INFLUX_TOKEN:}")
+    public String token;
 
-    @Override
-    protected String getValueSerializerName() {
-        return ByteBufferSerializer.class.getName();
-    }
+    @Value("${ACTION_INFLUX_ORG:}")
+    public String org;
+
+    @Value("${ACTION_INFLUX_BUCKET:}")
+    public String bucket;
 
 }

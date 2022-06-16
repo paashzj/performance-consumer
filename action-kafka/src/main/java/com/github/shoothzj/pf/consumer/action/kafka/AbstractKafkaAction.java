@@ -22,6 +22,7 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -36,20 +37,13 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private final String kafkaAddr;
 
-    private String topic;
+    private final String topic;
 
     private KafkaProducer<String, T> producer;
 
-    public AbstractKafkaAction(String kafkaAddr) {
-        this.kafkaAddr = kafkaAddr;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
+    public AbstractKafkaAction(ActionKafkaConfig kafkaConfig) {
+        this.kafkaAddr = kafkaConfig.addr;
+        this.topic = kafkaConfig.topic;
     }
 
     @Override
@@ -72,16 +66,17 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     @Override
     public void handleMsg(ActionMsg<T> msg) {
-        if (this.topic.isEmpty()) {
-            this.topic = "test";
-        }
-        ProducerRecord<String, T> record = new ProducerRecord<String, T>(this.topic, msg.getContent());
-        try {
-            RecordMetadata recordMetadata = this.producer.send(record).get();
-            log.info("partition: {}, offset: {}", recordMetadata.partition(), recordMetadata.offset());
-        } catch (Exception e) {
-            log.error("send fail ", e);
-        }
+        producer.send(new ProducerRecord<>(topic, msg.getContent()), new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                if (exception == null) {
+                    log.info("send kafka message id {} partition {} success {}",
+                            msg.getMessageId(), metadata.partition(), metadata.offset());
+                } else {
+                    log.error("send kafka fail, message id {}", msg.getMessageId(), exception);
+                }
+            }
+        });
     }
 
 }

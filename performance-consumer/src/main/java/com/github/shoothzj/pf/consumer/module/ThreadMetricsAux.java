@@ -21,9 +21,6 @@ package com.github.shoothzj.pf.consumer.module;
 
 import lombok.Data;
 
-/**
- * @author hezhangjian
- */
 @Data
 public class ThreadMetricsAux {
 

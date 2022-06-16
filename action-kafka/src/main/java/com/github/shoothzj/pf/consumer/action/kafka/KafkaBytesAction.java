@@ -22,8 +22,8 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 
 public class KafkaBytesAction extends AbstractKafkaAction<byte[]> {
-    public KafkaBytesAction(String kafkaAddr) {
-        super(kafkaAddr);
+    public KafkaBytesAction(ActionKafkaConfig kafkaConfig) {
+        super(kafkaConfig);
     }
 
     @Override

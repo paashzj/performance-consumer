@@ -33,7 +33,6 @@ import org.apache.pulsar.client.api.MessageListener;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.api.Schema;
-import org.apache.pulsar.client.api.SubscriptionInitialPosition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -256,11 +255,7 @@ public class PulsarBootService {
             builder.ackTimeout(pulsarConfig.ackTimeoutMilliseconds, TimeUnit.MILLISECONDS);
             builder.ackTimeoutTickTime(pulsarConfig.ackTimeoutTickTimeMilliseconds, TimeUnit.MILLISECONDS);
         }
-        if ("Earliest".equals(pulsarConfig.subscriptionInitialPosition)) {
-            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Earliest);
-        } else {
-            builder.subscriptionInitialPosition(SubscriptionInitialPosition.Latest);
-        }
+        builder.subscriptionInitialPosition(pulsarConfig.subscriptionInitialPosition);
         builder.receiverQueueSize(pulsarConfig.receiveQueueSize);
         if (!pulsarConfig.consumeBatch) {
             return builder;

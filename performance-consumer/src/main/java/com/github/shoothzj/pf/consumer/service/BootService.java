@@ -29,9 +29,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @Service
 public class BootService {
