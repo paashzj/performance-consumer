@@ -88,6 +88,13 @@ public class PulsarConfig {
     @Value("${PULSAR_SUBSCRIPTION_NAME:}")
     public String subscriptionName;
 
+
+    @Value("${PULSAR_SUBSCRIPTION_INITIAL_POSITION:Latest}")
+    public String subscriptionInitialPosition;
+
+    @Value("${PULSAR_SUBSCRIPTION_SEEK_TIMESTAMP:0}")
+    public Long subscriptionSeekTimestamp;
+
     @Value("${PULSAR_RECEIVE_QUEUE_SIZE:1000}")
     public int receiveQueueSize;
 
@@ -135,12 +142,6 @@ public class PulsarConfig {
 
     @Value("${PULSAR_TLS_TRUSTSTORE_PASSWORD:}")
     public String tlsTrustStorePassword;
-
-    @Value("${PULSAR_SEEK_TIMESTAMP:0}")
-    public Long seekTimestamp;
-
-    @Value("${PULSAR_SUBSCRIPTION_INITIAL_POSITION:Latest}")
-    public String subscriptionInitialPosition;
 
     public String getSubscriptionName() {
         if (StringUtils.isEmpty(subscriptionName)) {

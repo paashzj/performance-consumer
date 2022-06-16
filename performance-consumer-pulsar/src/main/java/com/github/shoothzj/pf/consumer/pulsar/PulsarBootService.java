@@ -135,7 +135,7 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
-                consumer.seek(pulsarConfig.seekTimestamp);
+                consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -165,7 +165,7 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<ByteBuffer> consumer = createConsumerBuilderByteBuffer(topic).subscribe();
-                consumer.seek(pulsarConfig.seekTimestamp);
+                consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
@@ -195,7 +195,9 @@ public class PulsarBootService {
         for (String topic : topics) {
             try {
                 final Consumer<byte[]> consumer = createConsumerBuilderBytes(topic).subscribe();
-                consumer.seek(pulsarConfig.seekTimestamp);
+                if (pulsarConfig.subscriptionSeekTimestamp != 0) {
+                    consumer.seek(pulsarConfig.subscriptionSeekTimestamp);
+                }
                 int index = aux % commonConfig.pullThreads;
                 consumerListList.get(index).add(consumer);
                 if (pulsarConfig.receiveLimiter == -1) {
