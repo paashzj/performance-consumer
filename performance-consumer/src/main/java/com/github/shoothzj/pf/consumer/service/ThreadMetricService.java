@@ -34,9 +34,6 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.HashMap;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @Service
 public class ThreadMetricService {

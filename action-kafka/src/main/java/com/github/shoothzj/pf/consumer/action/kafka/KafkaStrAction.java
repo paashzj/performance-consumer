@@ -23,8 +23,8 @@ import org.apache.kafka.common.serialization.StringSerializer;
 
 public class KafkaStrAction extends AbstractKafkaAction<String> {
 
-    public KafkaStrAction(String kafkaAddr) {
-        super(kafkaAddr);
+    public KafkaStrAction(ActionKafkaConfig kafkaConfig) {
+        super(kafkaConfig);
     }
 
     @Override

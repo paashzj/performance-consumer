@@ -19,19 +19,18 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
-import org.apache.kafka.common.serialization.ByteBufferSerializer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-import java.nio.ByteBuffer;
+@Configuration
+@Service
+public class ActionKafkaConfig {
 
-public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
+    @Value("${ACTION_KAFKA_ADDR:}")
+    public String addr;
 
-    public KafkaByteBufferAction(ActionKafkaConfig kafkaConfig) {
-        super(kafkaConfig);
-    }
-
-    @Override
-    protected String getValueSerializerName() {
-        return ByteBufferSerializer.class.getName();
-    }
+    @Value("${ACTION_KAFKA_TOPIC:}")
+    public String topic;
 
 }

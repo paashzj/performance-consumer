@@ -17,21 +17,17 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.kafka;
+package com.github.shoothzj.pf.consumer.action.log;
 
-import org.apache.kafka.common.serialization.ByteBufferSerializer;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-import java.nio.ByteBuffer;
+@Configuration
+@Service
+public class ActionLogConfig {
 
-public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
-
-    public KafkaByteBufferAction(ActionKafkaConfig kafkaConfig) {
-        super(kafkaConfig);
-    }
-
-    @Override
-    protected String getValueSerializerName() {
-        return ByteBufferSerializer.class.getName();
-    }
+    @Value("${ACTION_LOG_REGEX:}")
+    public String regex;
 
 }

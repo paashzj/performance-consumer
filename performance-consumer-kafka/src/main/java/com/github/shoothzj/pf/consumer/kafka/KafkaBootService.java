@@ -29,9 +29,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @Service
 public class KafkaBootService {

@@ -22,9 +22,6 @@ package com.github.shoothzj.pf.consumer.action.module;
 import lombok.Data;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author hezhangjian
- */
 @Data
 public class ActionMsg<T> {
     @Nullable
