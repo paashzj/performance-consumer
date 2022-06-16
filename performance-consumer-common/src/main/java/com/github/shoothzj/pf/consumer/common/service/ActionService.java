@@ -32,8 +32,9 @@ import com.github.shoothzj.pf.consumer.action.log.LogStrAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.ActionConfig;
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
-import com.github.shoothzj.pf.consumer.common.module.ActionType;
+import com.github.shoothzj.pf.consumer.action.module.ActionType;
 import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,9 @@ public class ActionService {
     @Autowired
     private CommonConfig commonConfig;
 
+    @Autowired
+    private MeterRegistry meterRegistry;
+
     private Optional<IAction<ByteBuffer>> byteBufferAction = Optional.empty();
 
     private Optional<IAction<byte[]>> bytesAction = Optional.empty();
@@ -74,19 +78,19 @@ public class ActionService {
     public void init() {
         if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
             if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                byteBufferAction = Optional.of(new KafkaByteBufferAction(actionKafkaConfig));
+                byteBufferAction = Optional.of(new KafkaByteBufferAction(actionKafkaConfig, meterRegistry));
             }
         }
         if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
             if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                bytesAction = Optional.of(new KafkaBytesAction(actionKafkaConfig));
+                bytesAction = Optional.of(new KafkaBytesAction(actionKafkaConfig, meterRegistry));
             }
         }
         if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
             if (actionConfig.actionType.equals(ActionType.INFLUX)) {
                 strAction = Optional.of(new InfluxStrAction());
             } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                strAction = Optional.of(new KafkaStrAction(actionKafkaConfig));
+                strAction = Optional.of(new KafkaStrAction(actionKafkaConfig, meterRegistry));
             } else if (actionConfig.actionType.equals(ActionType.LOG)) {
                 strAction = Optional.of(new LogStrAction(actionLogConfig));
             }

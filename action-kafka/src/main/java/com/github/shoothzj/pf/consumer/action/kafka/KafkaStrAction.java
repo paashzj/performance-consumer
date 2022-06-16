@@ -19,12 +19,13 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 public class KafkaStrAction extends AbstractKafkaAction<String> {
 
-    public KafkaStrAction(ActionKafkaConfig kafkaConfig) {
-        super(kafkaConfig);
+    public KafkaStrAction(ActionKafkaConfig kafkaConfig, MeterRegistry meterRegistry) {
+        super(kafkaConfig, meterRegistry);
     }
 
     @Override

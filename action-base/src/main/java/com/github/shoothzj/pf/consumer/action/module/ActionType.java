@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.common.module;
+package com.github.shoothzj.pf.consumer.action.module;
 
 public enum ActionType {
 

@@ -19,14 +19,15 @@
 
 package com.github.shoothzj.pf.consumer.action.kafka;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import org.apache.kafka.common.serialization.ByteBufferSerializer;
 
 import java.nio.ByteBuffer;
 
 public class KafkaByteBufferAction extends AbstractKafkaAction<ByteBuffer> {
 
-    public KafkaByteBufferAction(ActionKafkaConfig kafkaConfig) {
-        super(kafkaConfig);
+    public KafkaByteBufferAction(ActionKafkaConfig kafkaConfig, MeterRegistry meterRegistry) {
+        super(kafkaConfig, meterRegistry);
     }
 
     @Override
