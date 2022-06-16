@@ -20,6 +20,7 @@
 package com.github.shoothzj.pf.consumer.pulsar;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.pulsar.client.api.SubscriptionInitialPosition;
 import org.apache.pulsar.client.api.SubscriptionType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -87,6 +88,12 @@ public class PulsarConfig {
 
     @Value("${PULSAR_SUBSCRIPTION_NAME:}")
     public String subscriptionName;
+
+    @Value("${PULSAR_SUBSCRIPTION_INITIAL_POSITION:Latest}")
+    public SubscriptionInitialPosition subscriptionInitialPosition;
+
+    @Value("${PULSAR_SUBSCRIPTION_SEEK_TIMESTAMP:0}")
+    public long subscriptionSeekTimestamp;
 
     @Value("${PULSAR_RECEIVE_QUEUE_SIZE:1000}")
     public int receiveQueueSize;
