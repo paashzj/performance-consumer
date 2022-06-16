@@ -34,8 +34,8 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private KafkaProducer<String, T> producer;
 
-    public AbstractKafkaAction(String kafkaAddr) {
-        this.kafkaAddr = kafkaAddr;
+    public AbstractKafkaAction(ActionKafkaConfig kafkaConfig) {
+        this.kafkaAddr = kafkaConfig.addr;
     }
 
     @Override

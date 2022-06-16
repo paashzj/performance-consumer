@@ -24,9 +24,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
-/**
- * @author hezhangjian
- */
 @Configuration
 @Service
 public class ActionConfig {
@@ -36,23 +33,5 @@ public class ActionConfig {
 
     @Value("${ACTION_BLOCK_DELAY_MS:0}")
     public int actionBlockDelayMs;
-
-    @Value("${ACTION_INFLUX_ADDR:}")
-    public String influxAddr;
-
-    @Value("${ACTION_INFLUX_TOKEN:}")
-    public String influxToken;
-
-    @Value("${ACTION_INFLUX_ORG:}")
-    public String influxOrg;
-
-    @Value("${ACTION_INFLUX_BUCKET:}")
-    public String influxBucket;
-
-    @Value("${ACTION_KAFKA_ADDR:}")
-    public String kafkaAddr;
-
-    @Value("${ACTION_LOG_REGEX:}")
-    public String logRegex;
 
 }

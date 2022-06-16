@@ -26,9 +26,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.time.LocalDateTime;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @EnableScheduling
 @SpringBootApplication

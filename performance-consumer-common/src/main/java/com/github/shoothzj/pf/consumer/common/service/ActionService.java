@@ -21,10 +21,13 @@ package com.github.shoothzj.pf.consumer.common.service;
 
 import com.github.shoothzj.javatool.util.CommonUtil;
 import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.influx.ActionInfluxConfig;
 import com.github.shoothzj.pf.consumer.action.influx.InfluxStrAction;
+import com.github.shoothzj.pf.consumer.action.kafka.ActionKafkaConfig;
 import com.github.shoothzj.pf.consumer.action.kafka.KafkaByteBufferAction;
 import com.github.shoothzj.pf.consumer.action.kafka.KafkaBytesAction;
 import com.github.shoothzj.pf.consumer.action.kafka.KafkaStrAction;
+import com.github.shoothzj.pf.consumer.action.log.ActionLogConfig;
 import com.github.shoothzj.pf.consumer.action.log.LogStrAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.ActionConfig;
@@ -42,15 +45,21 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-/**
- * @author hezhangjian
- */
 @Slf4j
 @Service
 public class ActionService {
 
     @Autowired
     private ActionConfig actionConfig;
+
+    @Autowired
+    private ActionInfluxConfig actionInfluxConfig;
+
+    @Autowired
+    private ActionKafkaConfig actionKafkaConfig;
+
+    @Autowired
+    private ActionLogConfig actionLogConfig;
 
     @Autowired
     private CommonConfig commonConfig;
@@ -65,21 +74,21 @@ public class ActionService {
     public void init() {
         if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
             if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                byteBufferAction = Optional.of(new KafkaByteBufferAction(actionConfig.kafkaAddr));
+                byteBufferAction = Optional.of(new KafkaByteBufferAction(actionKafkaConfig));
             }
         }
         if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
             if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                bytesAction = Optional.of(new KafkaBytesAction(actionConfig.kafkaAddr));
+                bytesAction = Optional.of(new KafkaBytesAction(actionKafkaConfig));
             }
         }
         if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
             if (actionConfig.actionType.equals(ActionType.INFLUX)) {
                 strAction = Optional.of(new InfluxStrAction());
             } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
-                strAction = Optional.of(new KafkaStrAction(actionConfig.kafkaAddr));
+                strAction = Optional.of(new KafkaStrAction(actionKafkaConfig));
             } else if (actionConfig.actionType.equals(ActionType.LOG)) {
-                strAction = Optional.of(new LogStrAction(actionConfig.logRegex));
+                strAction = Optional.of(new LogStrAction(actionLogConfig));
             }
         }
         byteBufferAction.ifPresent(IAction::init);
