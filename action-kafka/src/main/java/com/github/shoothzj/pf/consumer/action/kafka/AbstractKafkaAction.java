@@ -21,16 +21,30 @@ package com.github.shoothzj.pf.consumer.action.kafka;
 
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.List;
 import java.util.Properties;
 
+@Slf4j
 public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     private final String kafkaAddr;
+
+    private String topic;
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public void setTopic(String topic) {
+        this.topic = topic;
+    }
 
     private KafkaProducer<String, T> producer;
 
@@ -58,6 +72,13 @@ public abstract class AbstractKafkaAction<T> implements IAction<T> {
 
     @Override
     public void handleMsg(ActionMsg<T> msg) {
+        ProducerRecord<String, T> record = new ProducerRecord<String, T>(this.topic, msg.getContent());
+        try {
+            RecordMetadata recordMetadata = this.producer.send(record).get();
+            log.info("index offset: {}", recordMetadata.offset());
+        } catch (Exception e) {
+            log.error("send fail", e);
+        }
     }
 
 }
