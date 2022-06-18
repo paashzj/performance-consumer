@@ -28,7 +28,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @EnableScheduling
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.github.shoothzj.sdk.spring", "com.github.shoothzj.pf.consumer"})
 public class Main {
 
     public static void main(String[] args) {
