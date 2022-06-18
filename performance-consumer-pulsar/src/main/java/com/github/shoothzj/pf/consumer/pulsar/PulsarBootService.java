@@ -19,10 +19,11 @@
 
 package com.github.shoothzj.pf.consumer.pulsar;
 
-import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
-import com.github.shoothzj.pf.consumer.common.service.ActionService;
+import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 import com.github.shoothzj.pf.consumer.common.config.CommonConfig;
 import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
+import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
+import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.github.shoothzj.pf.consumer.common.util.NameUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.BatchReceivePolicy;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,11 +105,63 @@ public class PulsarBootService {
     }
 
     public void startConsumersListen(List<String> topics) {
+        if (commonConfig.exchangeType.equals(ExchangeType.BYTES)) {
+            startConsumersListenBytes(topics);
+        } else if (commonConfig.exchangeType.equals(ExchangeType.BYTE_BUFFER)) {
+            startConsumersListenByteBuffer(topics);
+        } else if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
+            startConsumersListenString(topics);
+        }
+    }
+
+    public void startConsumersListenBytes(List<String> topics) {
         for (String topic : topics) {
             try {
                 createConsumerBuilderBytes(topic)
                         .messageListener((MessageListener<byte[]>) (consumer, msg)
-                                -> log.debug("do nothing {}", msg.getMessageId())).subscribe();
+                                -> {
+                            log.debug("do nothing {}", msg.getMessageId());
+                            ActionMsg<byte[]> actionMsg = new ActionMsg<>();
+                            actionMsg.setMessageId(msg.getMessageId().toString());
+                            actionMsg.setContent(msg.getValue());
+                            actionService.handleBytesMsg(actionMsg);
+                        }).subscribe();
+            } catch (PulsarClientException e) {
+                log.error("create consumer fail. topic [{}]", topic, e);
+            }
+        }
+    }
+
+    public void startConsumersListenByteBuffer(List<String> topics) {
+        for (String topic : topics) {
+            try {
+                createConsumerBuilderByteBuffer(topic)
+                        .messageListener((MessageListener<ByteBuffer>) (consumer, msg)
+                                -> {
+                            log.debug("do nothing {}", msg.getMessageId());
+                            ActionMsg<ByteBuffer> actionMsg = new ActionMsg<>();
+                            actionMsg.setMessageId(msg.getMessageId().toString());
+                            actionMsg.setContent(msg.getValue());
+                            actionService.handleByteBufferMsg(actionMsg);
+                        }).subscribe();
+            } catch (PulsarClientException e) {
+                log.error("create consumer fail. topic [{}]", topic, e);
+            }
+        }
+    }
+
+    public void startConsumersListenString(List<String> topics) {
+        for (String topic : topics) {
+            try {
+                createConsumerBuilderBytes(topic)
+                        .messageListener((MessageListener<byte[]>) (consumer, msg)
+                                -> {
+                            log.debug("do nothing {}", msg.getMessageId());
+                            ActionMsg<String> actionMsg = new ActionMsg<>();
+                            actionMsg.setMessageId(msg.getMessageId().toString());
+                            actionMsg.setContent(new String(msg.getValue(), StandardCharsets.UTF_8));
+                            actionService.handleStrMsg(actionMsg);
+                        }).subscribe();
             } catch (PulsarClientException e) {
                 log.error("create consumer fail. topic [{}]", topic, e);
             }
