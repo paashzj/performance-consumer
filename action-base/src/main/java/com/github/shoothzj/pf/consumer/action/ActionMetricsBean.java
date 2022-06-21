@@ -43,8 +43,6 @@ public class ActionMetricsBean {
 
     private static final String FAIL_LATENCY_TIMER_NAME_FORMAT = "%s_fail_latency_timer";
 
-    private final ActionType actionType;
-
     private final Counter counter;
 
     private final Counter successCounter;
@@ -60,7 +58,6 @@ public class ActionMetricsBean {
     private final Timer failTimer;
 
     public ActionMetricsBean(MeterRegistry meterRegistry, ActionType actionType) {
-        this.actionType = actionType;
         String[] tags = new String[]{"action_type", actionType.toString()};
         this.counter = meterRegistry.counter(COUNT_NAME_FORMAT, tags);
         this.successCounter = meterRegistry.counter(SUCCESS_COUNT_NAME_FORMAT, tags);
