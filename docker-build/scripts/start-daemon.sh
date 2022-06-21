@@ -63,8 +63,11 @@ fi
 # mem option
 JVM_OPT="-Xmx${HEAP_MEM} -Xms${HEAP_MEM} -XX:MaxDirectMemorySize=${DIR_MEM}"
 # gc option
+if [ ! -n "$GC_THREADS" ]; then
+  GC_THREADS=1
+fi
 JVM_OPT="${JVM_OPT} -XX:+UseG1GC -XX:MaxGCPauseMillis=10 -XX:+ParallelRefProcEnabled -XX:+UnlockExperimentalVMOptions"
-JVM_OPT="${JVM_OPT} -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=4 -XX:ConcGCThreads=4"
+JVM_OPT="${JVM_OPT} -XX:+DoEscapeAnalysis -XX:ParallelGCThreads=${GC_THREADS} -XX:ConcGCThreads=${GC_THREADS}"
 # gc log option
 JVM_OPT="${JVM_OPT} -Xlog:gc*=info,gc+phases=debug:$PF_HOME/logs/gc.log:time,uptime:filecount=10,filesize=100M"
 
