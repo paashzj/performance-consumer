@@ -29,19 +29,19 @@ import java.util.concurrent.TimeUnit;
 
 public class ActionMetricsBean {
 
-    private static final String COUNT_NAME_FORMAT = "%s_count";
+    private static final String COUNT_NAME_FORMAT = "action_count";
 
-    private static final String SUCCESS_COUNT_NAME_FORMAT = "%s_success_count";
+    private static final String SUCCESS_COUNT_NAME_FORMAT = "action_success_count";
 
-    private static final String FAIL_COUNT_NAME_FORMAT = "%s_fail_count";
+    private static final String FAIL_COUNT_NAME_FORMAT = "action_fail_count";
 
-    private static final String SUCCESS_LATENCY_SUMMARY_NAME_FORMAT = "%s_success_latency_summary";
+    private static final String SUCCESS_LATENCY_SUMMARY_NAME_FORMAT = "action_success_latency_summary";
 
-    private static final String FAIL_LATENCY_SUMMARY_NAME_FORMAT = "%s_fail_latency_summary";
+    private static final String FAIL_LATENCY_SUMMARY_NAME_FORMAT = "action_fail_latency_summary";
 
-    private static final String SUCCESS_LATENCY_TIMER_NAME_FORMAT = "%s_success_latency_timer";
+    private static final String SUCCESS_LATENCY_TIMER_NAME_FORMAT = "action_success_latency_timer";
 
-    private static final String FAIL_LATENCY_TIMER_NAME_FORMAT = "%s_fail_latency_timer";
+    private static final String FAIL_LATENCY_TIMER_NAME_FORMAT = "action_fail_latency_timer";
 
     private final Counter counter;
 
