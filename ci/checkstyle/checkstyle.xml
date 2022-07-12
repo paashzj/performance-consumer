@@ -142,6 +142,8 @@ page at http://checkstyle.sourceforge.net/config.html -->
             <property name="severity" value="error"/>
         </module>
 
+        <module name="AvoidStaticImport"/>
+
         <module name="RedundantModifier">
             <!-- Checks for redundant modifiers on various symbol definitions.
               See: http://checkstyle.sourceforge.net/config_modifier.html#RedundantModifier
@@ -165,6 +167,7 @@ page at http://checkstyle.sourceforge.net/config.html -->
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocMethod">
+            <property name="scope" value="protected"/>
             <property name="severity" value="error"/>
             <property name="allowMissingParamTags" value="true"/>
             <property name="allowMissingReturnTag" value="true"/>

@@ -83,7 +83,7 @@ public class PulsarConfig {
     @Value("${PULSAR_OPERATION_TIMEOUT_SECONDS:15}")
     public int operationTimeoutSeconds;
 
-    @Value("${PULSAR_SUBSCRIPTION_TYPE:Exclusive}")
+    @Value("${PULSAR_SUBSCRIPTION_TYPE:Failover}")
     public SubscriptionType subscriptionType;
 
     @Value("${PULSAR_SUBSCRIPTION_NAME:}")
