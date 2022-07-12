@@ -24,6 +24,8 @@ import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.MsgCallback;
 import com.github.shoothzj.pf.consumer.action.influx.ActionInfluxConfig;
 import com.github.shoothzj.pf.consumer.action.influx.InfluxStrAction;
+import com.github.shoothzj.pf.consumer.action.influx1.ActionInflux1Config;
+import com.github.shoothzj.pf.consumer.action.influx1.Influx1StrAction;
 import com.github.shoothzj.pf.consumer.action.kafka.ActionKafkaConfig;
 import com.github.shoothzj.pf.consumer.action.kafka.KafkaByteBufferAction;
 import com.github.shoothzj.pf.consumer.action.kafka.KafkaBytesAction;
@@ -56,6 +58,9 @@ public class ActionService {
 
     @Autowired
     private ActionInfluxConfig actionInfluxConfig;
+
+    @Autowired
+    private ActionInflux1Config actionInflux1Config;
 
     @Autowired
     private ActionKafkaConfig actionKafkaConfig;
@@ -92,6 +97,8 @@ public class ActionService {
         if (commonConfig.exchangeType.equals(ExchangeType.STRING)) {
             if (actionConfig.actionType.equals(ActionType.INFLUX)) {
                 strAction = Optional.of(new InfluxStrAction());
+            } else if (actionConfig.actionType.equals(ActionType.INFLUX1)) {
+                strAction = Optional.of(new Influx1StrAction());
             } else if (actionConfig.actionType.equals(ActionType.KAFKA)) {
                 strAction = Optional.of(new KafkaStrAction(actionKafkaConfig, meterRegistry));
             } else if (actionConfig.actionType.equals(ActionType.LOG)) {

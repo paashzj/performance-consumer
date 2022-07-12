@@ -17,16 +17,20 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.module;
+package com.github.shoothzj.pf.consumer.action.influx1;
 
-public enum ActionType {
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-    INFLUX,
+@Configuration
+@Service
+public class ActionInflux1Config {
 
-    INFLUX1,
+    @Value("${ACTION_INFLUX1_HOST:localhost}")
+    public String addr;
 
-    KAFKA,
-
-    LOG,
+    @Value("${ACTION_INFLUX1_PORT:8086}")
+    public int port;
 
 }
