@@ -17,16 +17,30 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.module;
+package com.github.shoothzj.pf.consumer.action.influx1;
 
-public enum ActionType {
+import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
+import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
-    INFLUX,
+import java.util.List;
+import java.util.Optional;
 
-    INFLUX1,
+public class Influx1StrAction implements IAction<String> {
 
-    KAFKA,
+    @Override
+    public void init() {
 
-    LOG,
+    }
+
+    @Override
+    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
+
+    }
+
+    @Override
+    public void handleMsg(ActionMsg<String> msg, Optional<MsgCallback> msgCallback) {
+
+    }
 
 }

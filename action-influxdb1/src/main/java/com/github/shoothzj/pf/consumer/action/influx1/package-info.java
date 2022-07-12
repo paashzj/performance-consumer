@@ -17,16 +17,4 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.module;
-
-public enum ActionType {
-
-    INFLUX,
-
-    INFLUX1,
-
-    KAFKA,
-
-    LOG,
-
-}
+package com.github.shoothzj.pf.consumer.action.influx1;

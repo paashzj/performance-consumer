@@ -27,6 +27,7 @@
     <modules>
         <module>action-base</module>
         <module>action-influxdb</module>
+        <module>action-influxdb1</module>
         <module>action-kafka</module>
         <module>action-log</module>
         <module>performance-consumer</module>
