@@ -44,6 +44,13 @@ if [ -n "${PULSAR_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
   wget -P $PF_HOME/lib  --no-check-certificate "${MAVEN_ADDRESS}"/org/apache/pulsar/pulsar-transaction-common/"${PULSAR_JAR_VERSION}"/pulsar-transaction-common-"${PULSAR_JAR_VERSION}".jar
 fi
 
+if [ -n "${BOOKKEEPER_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
+  # delete original version jar of bookkeeper
+  rm -rf $PF_HOME/lib/bookkeeper-common-allocator*
+  # download specify version jar of bookkeeper
+  wget -P $PF_HOME/lib  --no-check-certificate "${MAVEN_ADDRESS}"/org/apache/bookkeeper/bookkeeper-common-allocator/"${BOOKKEEPER_JAR_VERSION}"/bookkeeper-common-allocator-"${BOOKKEEPER_JAR_VERSION}".jar
+fi
+
 if [ -n "${APOLLO_JAR_VERSION}" ] && [ -n "${MAVEN_ADDRESS}" ]; then
   rm -rf $PF_HOME/lib/apollo*
 
