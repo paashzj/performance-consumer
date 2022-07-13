@@ -56,7 +56,9 @@ public class OkhttpStrAction implements IAction<String> {
         this.client = new OkHttpClient.Builder()
                 .callTimeout(config.requestTimeoutSeconds, TimeUnit.SECONDS)
                 .connectTimeout(config.connectionTimeoutSeconds, TimeUnit.SECONDS)
-                .connectionPool(new ConnectionPool(config.maxIdleConnections, config.connectionKeepaliveMinutes, TimeUnit.MINUTES))
+                .connectionPool(new ConnectionPool(config.maxIdleConnections,
+                        config.connectionKeepaliveMinutes,
+                        TimeUnit.MINUTES))
                 .build();
     }
 
@@ -86,8 +88,10 @@ public class OkhttpStrAction implements IAction<String> {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value() || response.code() < HttpStatus.OK.value()) {
-                        log.error("send msg {} to http server {} failed, response code: {}, reason: {}", msg.getMessageId(), request.url(), response.code(), responseBody.string());
+                    if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value()
+                            || response.code() < HttpStatus.OK.value()) {
+                        log.error("send msg {} to http server {} failed, response code: {}, reason: {}",
+                                msg.getMessageId(), request.url(), response.code(), responseBody.string());
                         msgCallback.ifPresent(msgCallback -> msgCallback.fail(msg.getMessageId()));
                     }
                     log.info("send msg {} succeed", msg.getMessageId());

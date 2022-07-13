@@ -66,7 +66,7 @@ class OkhttpStrActionTest {
     }
 
     @Test
-    void handleMsg() throws InterruptedException {
+    void handleMsgTest() throws InterruptedException {
         ActionMsg<String> msg1 = new ActionMsg<>();
         msg1.setContent("{\"k1\":\"v1\"}");
         msg1.setMessageId("0");
