@@ -17,20 +17,4 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx1;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
-
-@Configuration
-@Service
-public class ActionInflux1Config {
-
-    @Value("${ACTION_INFLUX1_HOST:localhost}")
-    public String host;
-
-    @Value("${ACTION_INFLUX1_PORT:8086}")
-    public int port;
-
-}
+package com.github.shoothzj.pf.consumer.action.http.common;

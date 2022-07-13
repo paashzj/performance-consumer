@@ -26,6 +26,8 @@
     <packaging>pom</packaging>
     <modules>
         <module>action-base</module>
+        <module>action-http-common</module>
+        <module>action-http-okhttp</module>
         <module>action-influxdb</module>
         <module>action-influxdb1</module>
         <module>action-kafka</module>

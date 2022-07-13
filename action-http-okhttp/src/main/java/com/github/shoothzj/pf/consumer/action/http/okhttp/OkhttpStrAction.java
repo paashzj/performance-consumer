@@ -17,20 +17,30 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx1;
+package com.github.shoothzj.pf.consumer.action.http.okhttp;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Service;
+import com.github.shoothzj.pf.consumer.action.IAction;
+import com.github.shoothzj.pf.consumer.action.MsgCallback;
+import com.github.shoothzj.pf.consumer.action.module.ActionMsg;
 
-@Configuration
-@Service
-public class ActionInflux1Config {
+import java.util.List;
+import java.util.Optional;
 
-    @Value("${ACTION_INFLUX1_HOST:localhost}")
-    public String host;
+public class OkhttpStrAction implements IAction<String> {
 
-    @Value("${ACTION_INFLUX1_PORT:8086}")
-    public int port;
+    @Override
+    public void init() {
+
+    }
+
+    @Override
+    public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
+
+    }
+
+    @Override
+    public void handleMsg(ActionMsg<String> msg, Optional<MsgCallback> msgCallback) {
+
+    }
 
 }
