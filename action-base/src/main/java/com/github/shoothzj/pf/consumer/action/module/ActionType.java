@@ -21,6 +21,8 @@ package com.github.shoothzj.pf.consumer.action.module;
 
 public enum ActionType {
 
+    OKHTTP,
+
     INFLUX,
 
     INFLUX1,

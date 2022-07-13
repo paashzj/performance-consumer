@@ -22,6 +22,8 @@ package com.github.shoothzj.pf.consumer.common.service;
 import com.github.shoothzj.javatool.util.CommonUtil;
 import com.github.shoothzj.pf.consumer.action.IAction;
 import com.github.shoothzj.pf.consumer.action.MsgCallback;
+import com.github.shoothzj.pf.consumer.action.http.common.ActionHttpConfig;
+import com.github.shoothzj.pf.consumer.action.http.okhttp.OkhttpStrAction;
 import com.github.shoothzj.pf.consumer.action.influx.ActionInfluxConfig;
 import com.github.shoothzj.pf.consumer.action.influx.InfluxStrAction;
 import com.github.shoothzj.pf.consumer.action.influx1.ActionInflux1Config;
@@ -72,6 +74,9 @@ public class ActionService {
     private CommonConfig commonConfig;
 
     @Autowired
+    private ActionHttpConfig actionHttpConfig;
+
+    @Autowired
     private MeterRegistry meterRegistry;
 
     private Optional<IAction<ByteBuffer>> byteBufferAction = Optional.empty();
@@ -103,6 +108,8 @@ public class ActionService {
                 strAction = Optional.of(new KafkaStrAction(actionKafkaConfig, meterRegistry));
             } else if (actionConfig.actionType.equals(ActionType.LOG)) {
                 strAction = Optional.of(new LogStrAction(actionLogConfig));
+            } else if (actionConfig.actionType.equals(ActionType.OKHTTP)) {
+                strAction = Optional.of(new OkhttpStrAction(actionHttpConfig));
             }
         }
         byteBufferAction.ifPresent(IAction::init);

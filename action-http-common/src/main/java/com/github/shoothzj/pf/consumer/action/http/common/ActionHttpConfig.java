@@ -33,4 +33,19 @@ public class ActionHttpConfig {
     @Value("${ACTION_HTTP_PORT:80}")
     public int port;
 
+    @Value("${ACTION_HTTP_URI:receive}")
+    public String uri;
+
+    @Value("${ACTION_HTTP_REQUEST_TIMEOUT_SECONDS:30}")
+    public int requestTimeoutSeconds;
+
+    @Value("${ACTION_HTTP_CONNECTION_TIMEOUT_SECONDS:30}")
+    public int connectionTimeoutSeconds;
+
+    @Value("${ACTION_HTTP_MAX_IDLE_CONNECTIONS:10}")
+    public int maxIdleConnections;
+
+    @Value("${ACTION_HTTP_CONNECTION_KEEPALIVE_MINUTES:10}")
+    public int connectionKeepaliveMinutes;
+
 }
