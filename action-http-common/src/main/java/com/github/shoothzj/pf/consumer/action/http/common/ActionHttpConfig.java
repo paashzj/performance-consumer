@@ -33,7 +33,7 @@ public class ActionHttpConfig {
     @Value("${ACTION_HTTP_PORT:80}")
     public int port;
 
-    @Value("${ACTION_HTTP_PORT:receive}")
+    @Value("${ACTION_HTTP_URI:receive}")
     public String uri;
 
     @Value("${ACTION_HTTP_REQUEST_TIMEOUT_SECONDS:30}")

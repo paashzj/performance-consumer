@@ -38,7 +38,6 @@ class OkhttpStrActionTest {
 
     private OkhttpStrAction action;
 
-
     @BeforeEach
     public void setUp() {
         ActionHttpConfig config = new ActionHttpConfig();
