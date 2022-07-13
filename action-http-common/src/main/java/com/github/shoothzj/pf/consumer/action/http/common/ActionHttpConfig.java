@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.influx1;
+package com.github.shoothzj.pf.consumer.action.http.common;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -25,12 +25,12 @@ import org.springframework.stereotype.Service;
 
 @Configuration
 @Service
-public class ActionInflux1Config {
+public class ActionHttpConfig {
 
-    @Value("${ACTION_INFLUX1_HOST:localhost}")
+    @Value("${ACTION_HTTP_HOST:localhost}")
     public String host;
 
-    @Value("${ACTION_INFLUX1_PORT:8086}")
+    @Value("${ACTION_HTTP_PORT:80}")
     public int port;
 
 }
