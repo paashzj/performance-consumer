@@ -33,12 +33,13 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class OkhttpStrAction implements IAction<String> {
@@ -65,45 +66,62 @@ public class OkhttpStrAction implements IAction<String> {
     @Override
     public void init() {
         String requestUrl = String.format("http://%s:%s/%s", config.host, config.port, config.uri);
+        log.info("Starting OkHttp Server Action, remote {}", requestUrl);
         builder = new Request.Builder().url(requestUrl);
     }
 
     @Override
     public void handleBatchMsg(List<ActionMsg<String>> actionMsgs) {
-        actionMsgs.forEach(msg -> {
-            handleMsg(msg, Optional.empty());
-        });
+        String content = actionMsgs.stream()
+                .map(ActionMsg::getContent)
+                .collect(Collectors.joining(",", "{", "}"));
+        Request request = builder.post(RequestBody.create(content, MEDIA_TYPE_JSON)).build();
+        sendMsgToHttpServer(request, Optional.empty(), Optional.empty());
     }
 
     @Override
     public void handleMsg(ActionMsg<String> msg, Optional<MsgCallback> msgCallback) {
         Request request = builder.post(RequestBody.create(msg.getContent(), MEDIA_TYPE_JSON)).build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                log.error("send msg {} to http server {} failed", msg.getMessageId(), request.url(), e);
-                msgCallback.ifPresent(msgCallback -> msgCallback.fail(msg.getMessageId()));
-            }
+        sendMsgToHttpServer(request, Optional.ofNullable(msg.getMessageId()), msgCallback);
+    }
 
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try (ResponseBody responseBody = response.body()) {
-                    if (!response.isSuccessful()) {
-                        if (responseBody != null) {
-                            log.error("send msg {} to http server {} failed, response code: {}, reason: {}",
-                                    msg.getMessageId(), request.url(), response.code(), responseBody);
-                        } else {
-                            log.error("send msg {} to http server {} failed, response code: {}",
-                                    msg.getMessageId(), request.url(), response.code());
-                        }
-                        msgCallback.ifPresent(msgCallback -> msgCallback.fail(msg.getMessageId()));
-                        return;
-                    }
-                    log.info("send msg {} succeed", msg.getMessageId());
-                    msgCallback.ifPresent(msgCallback -> msgCallback.success(msg.getMessageId()));
+    private void sendMsgToHttpServer(Request request, Optional<String> msgId, Optional<MsgCallback> msgCallback) {
+        if (config.async) {
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    log.error("send msg to http server {} failed", request.url(), e);
+                    msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
                 }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    try (ResponseBody responseBody = response.body()) {
+                        if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value()
+                                || response.code() < HttpStatus.OK.value()) {
+                            log.error("send msg to http server {} failed, response code: {}, reason: {}",
+                                    request.url(), response.code(), responseBody.string());
+                            msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
+                            return;
+                        }
+                        msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.success(id)));
+                    }
+                }
+            });
+        } else {
+            try (Response response = client.newCall(request).execute()) {
+                if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value()
+                        || response.code() < HttpStatus.OK.value()) {
+                    log.error("send msg to http server {} failed, response code: {}", request.url(), response.code());
+                    msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
+                    return;
+                }
+                msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.success(id)));
+            } catch (Exception e) {
+                log.error("send msg to http server {} failed", request.url(), e);
+                msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
             }
-        });
+        }
     }
 
 }

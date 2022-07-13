@@ -29,6 +29,7 @@ import org.apache.pulsar.client.api.Messages;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -43,13 +44,16 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
 
     private final List<Semaphore> semaphores;
 
+    private ExecutorService executor;
+
     public AbstractPulsarPullThread(int i, ActionService actionService, List<Semaphore> semaphores,
-                                    List<Consumer<T>> consumers, PulsarConfig pulsarConfig) {
+                                    List<Consumer<T>> consumers, PulsarConfig pulsarConfig, ExecutorService executor) {
         super(i, actionService);
         this.semaphores = semaphores;
         this.consumers = consumers;
         this.pulsarConfig = pulsarConfig;
         this.rateLimiter = pulsarConfig.rateLimiter == -1 ? null : RateLimiter.create(pulsarConfig.rateLimiter);
+        this.executor = executor;
     }
 
     @Override
@@ -78,7 +82,7 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
         }
         if (pulsarConfig.consumeBatch) {
             consumer.batchReceiveAsync().thenAcceptAsync(messages -> {
-                        handleBatch(messages);
+                        executor.execute(() -> handleBatch(messages));
                         consumer.acknowledgeAsync(messages);
                         if (semaphore != null) {
                             semaphore.release();
@@ -93,7 +97,7 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
             });
         } else {
             consumer.receiveAsync().thenAcceptAsync(message -> {
-                handle(message);
+                executor.execute(() -> handle(message));
                 consumer.acknowledgeAsync(message);
                 if (semaphore != null) {
                     semaphore.release();
@@ -112,7 +116,7 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
         for (Consumer<T> consumer : consumers) {
             if (pulsarConfig.consumeBatch) {
                 final Messages<T> messages = consumer.batchReceive();
-                handleBatch(messages);
+                executor.execute(() -> handleBatch(messages));
                 consumer.acknowledge(messages);
             } else {
                 final Message<T> message =
@@ -120,7 +124,7 @@ public abstract class AbstractPulsarPullThread<T> extends AbstractPullThread {
                 if (message == null) {
                     continue;
                 }
-                handle(message);
+                executor.execute(() -> handle(message));
                 consumer.acknowledge(message);
             }
         }

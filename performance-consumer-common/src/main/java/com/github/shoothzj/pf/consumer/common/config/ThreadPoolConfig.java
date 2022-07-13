@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.github.shoothzj.pf.consumer.action.http.common;
+package com.github.shoothzj.pf.consumer.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -25,30 +25,11 @@ import org.springframework.stereotype.Service;
 
 @Configuration
 @Service
-public class ActionHttpConfig {
+public class ThreadPoolConfig {
 
-    @Value("${ACTION_HTTP_HOST:localhost}")
-    public String host;
+    @Value("${ACTION_THREADS:2}")
+    public int actionThreads;
 
-    @Value("${ACTION_HTTP_PORT:80}")
-    public int port;
-
-    @Value("${ACTION_HTTP_URI:receive}")
-    public String uri;
-
-    @Value("${ACTION_HTTP_REQUEST_TIMEOUT_SECONDS:30}")
-    public int requestTimeoutSeconds;
-
-    @Value("${ACTION_HTTP_CONNECTION_TIMEOUT_SECONDS:30}")
-    public int connectionTimeoutSeconds;
-
-    @Value("${ACTION_HTTP_MAX_IDLE_CONNECTIONS:10}")
-    public int maxIdleConnections;
-
-    @Value("${ACTION_HTTP_CONNECTION_KEEPALIVE_MINUTES:10}")
-    public int connectionKeepaliveMinutes;
-
-    @Value("${ACTION_HTTP_ASYNC:false}")
-    public boolean async;
-
+    @Value("${ACTION_THREAD_POOL_QUEUE_SIZE:10}")
+    public int actionThreadPoolQueueSize;
 }

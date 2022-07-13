@@ -25,6 +25,7 @@ import com.github.shoothzj.pf.consumer.common.module.ConsumeMode;
 import com.github.shoothzj.pf.consumer.common.module.ExchangeType;
 import com.github.shoothzj.pf.consumer.common.service.ActionService;
 import com.github.shoothzj.pf.consumer.common.util.NameUtil;
+import com.github.shoothzj.pf.consumer.common.util.ThreadPool;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.BatchReceivePolicy;
 import org.apache.pulsar.client.api.ClientBuilder;
@@ -43,12 +44,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
 public class PulsarBootService {
+
+    private ThreadPool threadPool;
 
     private PulsarClient pulsarClient;
 
@@ -60,11 +64,15 @@ public class PulsarBootService {
 
     private static final String AUTH_PLUGIN_CLASS_NAME = "org.apache.pulsar.client.impl.auth.AuthenticationKeyStoreTls";
 
+    private final ExecutorService executor;
+
     public PulsarBootService(@Autowired PulsarConfig pulsarConfig, @Autowired CommonConfig commonConfig,
-                             @Autowired ActionService actionService) {
+                             @Autowired ActionService actionService, @Autowired ThreadPool threadPool) {
         this.pulsarConfig = pulsarConfig;
         this.commonConfig = commonConfig;
         this.actionService = actionService;
+        this.threadPool = threadPool;
+        this.executor = threadPool.create("pf-pulsar-consumer");
     }
 
     public void boot() {
@@ -124,7 +132,7 @@ public class PulsarBootService {
                             ActionMsg<byte[]> actionMsg = new ActionMsg<>();
                             actionMsg.setMessageId(msg.getMessageId().toString());
                             actionMsg.setContent(msg.getValue());
-                            actionService.handleBytesMsg(actionMsg);
+                            executor.execute(() -> actionService.handleBytesMsg(actionMsg));
                         }).subscribe();
             } catch (PulsarClientException e) {
                 log.error("create consumer fail. topic [{}]", topic, e);
@@ -142,7 +150,7 @@ public class PulsarBootService {
                             ActionMsg<ByteBuffer> actionMsg = new ActionMsg<>();
                             actionMsg.setMessageId(msg.getMessageId().toString());
                             actionMsg.setContent(msg.getValue());
-                            actionService.handleByteBufferMsg(actionMsg);
+                            executor.execute(() -> actionService.handleByteBufferMsg(actionMsg));
                         }).subscribe();
             } catch (PulsarClientException e) {
                 log.error("create consumer fail. topic [{}]", topic, e);
@@ -160,7 +168,7 @@ public class PulsarBootService {
                             ActionMsg<String> actionMsg = new ActionMsg<>();
                             actionMsg.setMessageId(msg.getMessageId().toString());
                             actionMsg.setContent(new String(msg.getValue(), StandardCharsets.UTF_8));
-                            actionService.handleStrMsg(actionMsg);
+                            executor.execute(() -> actionService.handleStrMsg(actionMsg));
                         }).subscribe();
             } catch (PulsarClientException e) {
                 log.error("create consumer fail. topic [{}]", topic, e);
@@ -206,7 +214,7 @@ public class PulsarBootService {
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
             new PulsarPullBytesThread(i, actionService, semaphores, consumerListList.get(i),
-                    pulsarConfig).start();
+                    pulsarConfig, executor).start();
         }
     }
 
@@ -238,7 +246,7 @@ public class PulsarBootService {
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
             new PulsarPullByteBufferThread(i, actionService, semaphores, consumerListList.get(i),
-                    pulsarConfig).start();
+                    pulsarConfig, executor).start();
         }
     }
 
@@ -270,7 +278,7 @@ public class PulsarBootService {
         for (int i = 0; i < commonConfig.pullThreads; i++) {
             log.info("start pulsar pull thread {}", i);
             new PulsarPullStringThread(i, actionService, semaphores, consumerListList.get(i),
-                    pulsarConfig).start();
+                    pulsarConfig, executor).start();
         }
     }
 
