@@ -29,4 +29,6 @@ public enum ActionType {
 
     LOG,
 
+    OKHTTP
+
 }
