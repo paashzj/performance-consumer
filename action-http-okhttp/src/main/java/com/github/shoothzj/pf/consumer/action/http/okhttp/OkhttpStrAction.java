@@ -33,7 +33,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.springframework.http.HttpStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -89,18 +89,22 @@ public class OkhttpStrAction implements IAction<String> {
         if (config.async) {
             client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     log.error("send msg to http server {} failed", request.url(), e);
                     msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     try (ResponseBody responseBody = response.body()) {
-                        if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value()
-                                || response.code() < HttpStatus.OK.value()) {
-                            log.error("send msg to http server {} failed, response code: {}, reason: {}",
-                                    request.url(), response.code(), responseBody.string());
+                        if (!response.isSuccessful()) {
+                            if (responseBody != null) {
+                                log.error("send msg to http server {} failed, response code: {}, reason: {}",
+                                        request.url(), response.code(), responseBody.string());
+                            } else {
+                                log.error("send msg to http server {} failed, response code: {}",
+                                        request.url(), response.code());
+                            }
                             msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
                             return;
                         }
@@ -110,8 +114,7 @@ public class OkhttpStrAction implements IAction<String> {
             });
         } else {
             try (Response response = client.newCall(request).execute()) {
-                if (!response.isSuccessful() || response.code() > HttpStatus.MULTIPLE_CHOICES.value()
-                        || response.code() < HttpStatus.OK.value()) {
+                if (!response.isSuccessful()) {
                     log.error("send msg to http server {} failed, response code: {}", request.url(), response.code());
                     msgId.ifPresent(id -> msgCallback.ifPresent(callback -> callback.fail(id)));
                     return;
