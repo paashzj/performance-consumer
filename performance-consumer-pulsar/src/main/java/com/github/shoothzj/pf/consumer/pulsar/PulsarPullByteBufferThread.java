@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
 public class PulsarPullByteBufferThread extends AbstractPulsarPullThread<ByteBuffer> {
@@ -37,9 +38,10 @@ public class PulsarPullByteBufferThread extends AbstractPulsarPullThread<ByteBuf
                                       ActionService actionService,
                                       List<Semaphore> semaphores,
                                       List<Consumer<ByteBuffer>> consumers,
-                                      PulsarConfig pulsarConfig
+                                      PulsarConfig pulsarConfig,
+                                      ExecutorService executor
     ) {
-        super(i, actionService, semaphores, consumers, pulsarConfig);
+        super(i, actionService, semaphores, consumers, pulsarConfig, executor);
     }
 
     protected void handleBatch(Messages<ByteBuffer> messages) {

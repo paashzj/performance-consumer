@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
 @Slf4j
@@ -39,9 +40,10 @@ public class PulsarPullStringThread extends AbstractPulsarPullThread<byte[]> {
                                   ActionService actionService,
                                   List<Semaphore> semaphores,
                                   List<Consumer<byte[]>> consumers,
-                                  PulsarConfig pulsarConfig
+                                  PulsarConfig pulsarConfig,
+                                  ExecutorService executor
     ) {
-        super(i, actionService, semaphores, consumers, pulsarConfig);
+        super(i, actionService, semaphores, consumers, pulsarConfig, executor);
     }
 
     protected void handleBatch(Messages<byte[]> messages) {
